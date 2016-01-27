@@ -7,18 +7,28 @@ import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.steven.stlbusarrivals.Model.RouteList;
 import com.example.steven.stlbusarrivals.R;
+import com.example.steven.stlbusarrivals.UI.Adapter.SearchAdapter;
 import com.example.steven.stlbusarrivals.VolleySingleton;
 import com.example.steven.stlbusarrivals.XmlParser;
 
+import java.util.Observable;
+import java.util.Observer;
 
-public class SearchFragment extends Fragment {
 
+public class SearchFragment extends Fragment implements Observer {
+
+    private ListView listView;
+    private static RouteList routeList;
+    private SearchAdapter searchAdapter;
+    private XmlParser xmlparser;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -34,9 +44,9 @@ public class SearchFragment extends Fragment {
             public void onResponse(String response) {
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
-                Log.d("Server answer", response);
                 try{
-                    XmlParser.readXml(response);
+                    xmlparser = new XmlParser();
+                    routeList = xmlparser.readXml(response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -56,6 +66,18 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        listView = (ListView) container.findViewById(R.id.list);
         return inflater.inflate(R.layout.fragment_search, container, false);
+    }
+
+    public void refreshList(){
+        searchAdapter = new SearchAdapter(getActivity(), R.layout.row_search_list, routeList);
+        listView.setAdapter(searchAdapter);
+        searchAdapter.notifyDataSetChanged();
+    }
+    @Override
+    public void update(Observable observable, Object o) {
+        Log.d("searchfrag update","entered");
+        refreshList();
     }
 }

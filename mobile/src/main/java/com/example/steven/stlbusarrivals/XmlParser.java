@@ -1,8 +1,11 @@
 package com.example.steven.stlbusarrivals;
 
+import android.support.annotation.NonNull;
 import android.util.Xml;
 
 import com.example.steven.stlbusarrivals.Model.Route;
+import com.example.steven.stlbusarrivals.Model.RouteList;
+import com.example.steven.stlbusarrivals.UI.Fragments.SearchFragment;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -12,14 +15,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Observable;
 
 /**
  * Created by Steven on 2016-01-25.
  */
-public class XmlParser {
+public class XmlParser extends Observable{
 
-    public static void readXml(String xml)
+    private static RouteList routeList = new RouteList();
+
+    public RouteList readXml(String xml)
             throws XmlPullParserException, IOException
     {
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -32,19 +41,21 @@ public class XmlParser {
             if(eventType == XmlPullParser.START_DOCUMENT) {
             } else if(eventType == XmlPullParser.START_TAG) {
                 if(xpp.getName().equals("route")){
-                    System.out.print(xpp.getName() + " ");
-                    System.out.print(xpp.getAttributeName(0) + " ");
-                    System.out.print(xpp.getAttributeValue(0) + " ");
-                    System.out.print(xpp.getAttributeName(1) + " ");
-                    System.out.println(xpp.getAttributeValue(1));
+                    Route route = new Route();
+                    route.setTag(xpp.getAttributeName(0));
+                    route.setTitle(xpp.getAttributeName(1));
+                    routeList.add(route);
                 }
-            } else if(eventType == XmlPullParser.END_TAG) {
-                System.out.println("End tag "+xpp.getName());
-            } else if(eventType == XmlPullParser.TEXT) {
-                System.out.println("Text "+xpp.getText());
             }
             eventType = xpp.next();
         }
         System.out.println("End document");
+        notifyObs();
+        return routeList;
+
+    }
+    public void notifyObs(){
+        XmlParser.this.setChanged();
+        XmlParser.this.notifyObservers(SearchFragment.class.getName());
     }
 }
