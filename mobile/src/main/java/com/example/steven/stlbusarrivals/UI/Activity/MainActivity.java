@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.UI.Fragments.FavoritesFragment;
-import com.example.steven.stlbusarrivals.UI.Fragments.SearchFragment;
+import com.example.steven.stlbusarrivals.UI.Fragments.RouteSearchFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
             switch (position) {
                 case 0: // Fragment # 0 - This will show FavoritesFragment
                     return new FavoritesFragment();
-                case 1: // Fragment # 1 - This will show SearchFragment
-                    return new SearchFragment();
+                case 1: // Fragment # 1 - This will show RouteSearchFragment
+                    return new RouteSearchFragment();
                 default:
                     return null;
             }

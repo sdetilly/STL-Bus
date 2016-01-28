@@ -43,6 +43,12 @@
             android:parentActivityName=".UI.Activity.MainActivity">
 
         </activity>
+        <activity
+            android:name=".UI.Activity.StopSearchActivity"
+            android:label="@string/title_activity_stop_search"
+            android:parentActivityName=".UI.Activity.MainActivity">
+
+        </activity>
     </application>
 
 </manifest>

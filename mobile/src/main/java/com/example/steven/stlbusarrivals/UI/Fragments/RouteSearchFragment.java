@@ -1,34 +1,36 @@
 package com.example.steven.stlbusarrivals.UI.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.steven.stlbusarrivals.Model.Route;
 import com.example.steven.stlbusarrivals.Model.RouteList;
 import com.example.steven.stlbusarrivals.R;
-import com.example.steven.stlbusarrivals.UI.Adapter.SearchAdapter;
+import com.example.steven.stlbusarrivals.UI.Activity.StopSearchActivity;
+import com.example.steven.stlbusarrivals.UI.Adapter.RouteSearchAdapter;
 import com.example.steven.stlbusarrivals.VolleySingleton;
 import com.example.steven.stlbusarrivals.XmlParser;
-
 import java.util.Observable;
 import java.util.Observer;
 
 
-public class SearchFragment extends Fragment implements Observer {
+public class RouteSearchFragment extends Fragment implements Observer {
 
     private ListView listView;
     private static RouteList routeList;
-    private SearchAdapter searchAdapter;
+    private RouteSearchAdapter routeSearchAdapter;
     private XmlParser xmlparser = new XmlParser();
-    public SearchFragment() {
+    public RouteSearchFragment() {
         // Required empty public constructor
     }
 
@@ -37,6 +39,7 @@ public class SearchFragment extends Fragment implements Observer {
         super.onCreate(savedInstanceState);
         RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         xmlparser.addObserver(this);
+
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=stl";
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
 
@@ -45,7 +48,7 @@ public class SearchFragment extends Fragment implements Observer {
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser.readXml(response);
+                    xmlparser.readRouteXml(response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -65,15 +68,27 @@ public class SearchFragment extends Fragment implements Observer {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_search, container, false);
-        listView = (ListView) v.findViewById(R.id.list);
+        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_route_search, container, false);
+        listView = (ListView) v.findViewById(R.id.list_route_search);
         return v;
     }
 
     public void refreshList(){
-        searchAdapter = new SearchAdapter(getActivity(), R.layout.row_search_list, routeList);
-        listView.setAdapter(searchAdapter);
-        searchAdapter.notifyDataSetChanged();
+        routeSearchAdapter = new RouteSearchAdapter(getActivity(), R.layout.row_route_search_list, routeList);
+        listView.setAdapter(routeSearchAdapter);
+        routeSearchAdapter.notifyDataSetChanged();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Route item = routeList.get(position);
+                String tag = item.getTag();
+
+                Intent stopSearchIntent = new Intent(getActivity(), StopSearchActivity.class);
+                stopSearchIntent.putExtra("tag",tag);
+                getActivity().startActivity(stopSearchIntent);
+            }
+        });
     }
     @Override
     public void update(Observable observable, Object o) {
