@@ -3,7 +3,6 @@ package com.example.steven.stlbusarrivals.UI.Fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ public class SearchFragment extends Fragment implements Observer {
     private ListView listView;
     private static RouteList routeList;
     private SearchAdapter searchAdapter;
-    private XmlParser xmlparser;
+    private XmlParser xmlparser = new XmlParser();
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -37,6 +36,7 @@ public class SearchFragment extends Fragment implements Observer {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
+        xmlparser.addObserver(this);
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=stl";
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
 
@@ -45,8 +45,7 @@ public class SearchFragment extends Fragment implements Observer {
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser = new XmlParser();
-                    routeList = xmlparser.readXml(response);
+                    xmlparser.readXml(response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -66,8 +65,9 @@ public class SearchFragment extends Fragment implements Observer {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        listView = (ListView) container.findViewById(R.id.list);
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_search, container, false);
+        listView = (ListView) v.findViewById(R.id.list);
+        return v;
     }
 
     public void refreshList(){
@@ -78,6 +78,9 @@ public class SearchFragment extends Fragment implements Observer {
     @Override
     public void update(Observable observable, Object o) {
         Log.d("searchfrag update","entered");
+        if(o instanceof RouteList){
+            routeList = (RouteList) o;
+        }
         refreshList();
     }
 }
