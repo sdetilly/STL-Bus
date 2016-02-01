@@ -1,9 +1,18 @@
 package com.example.steven.stlbusarrivals;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.example.steven.stlbusarrivals.Model.Route;
 import com.example.steven.stlbusarrivals.Model.RouteList;
 import com.example.steven.stlbusarrivals.Model.Stop;
 import com.example.steven.stlbusarrivals.Model.StopList;
+import com.example.steven.stlbusarrivals.Model.TimeList;
+import com.example.steven.stlbusarrivals.Model.TimePrediction;
+import com.example.steven.stlbusarrivals.Model.Vehicule;
+import com.example.steven.stlbusarrivals.Model.VehiculeList;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -40,7 +49,6 @@ public class XmlParser extends Observable{
             }
             eventType = xpp.next();
         }
-        System.out.println("End document");
         notifyObs(routeList);
 
     }
@@ -62,22 +70,67 @@ public class XmlParser extends Observable{
                     Stop stop = new Stop();
                     stop.setTag(xpp.getAttributeValue(0));
                     stop.setTitle(xpp.getAttributeValue(1));
+                    stop.setId(xpp.getAttributeValue(4));
                     stopList.add(stop);
                 }
             }
                 eventType = xpp.next();
         }
-        System.out.println("End document");
         notifyObs(stopList);
-
     }
+
+    public void readPrediction(String xml)
+            throws XmlPullParserException, IOException
+    {
+        TimeList timeList = new TimeList();
+        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+        factory.setNamespaceAware(true);
+        XmlPullParser xpp = factory.newPullParser();
+
+        xpp.setInput( new StringReader( xml ) );
+        int eventType = xpp.getEventType();
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            if(eventType == XmlPullParser.START_DOCUMENT) {
+            } else if(eventType == XmlPullParser.START_TAG) {
+                if(xpp.getName().equals("prediction")){
+                    TimePrediction timePrediction = new TimePrediction();
+                    timePrediction.setTime(xpp.getAttributeValue(2));
+                    timeList.add(timePrediction);
+                }
+            }
+            eventType = xpp.next();
+        }
+        notifyObs(timeList);
+    }
+
+    public void readLocation(String xml)
+            throws XmlPullParserException, IOException
+    {
+        VehiculeList vehiculeList = new VehiculeList();
+        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+        factory.setNamespaceAware(true);
+        XmlPullParser xpp = factory.newPullParser();
+
+        xpp.setInput( new StringReader( xml ) );
+        int eventType = xpp.getEventType();
+        while (eventType != XmlPullParser.END_DOCUMENT) {
+            if(eventType == XmlPullParser.START_DOCUMENT) {
+            } else if(eventType == XmlPullParser.START_TAG) {
+                System.out.println(xpp.getName());
+                if(xpp.getName().equals("vehicle")){
+                    Vehicule vehicule = new Vehicule();
+                    vehicule.setLongitude(xpp.getAttributeValue(4));
+                    vehicule.setLatitude(xpp.getAttributeValue(3));
+                    vehiculeList.add(vehicule);
+                }
+            }
+            eventType = xpp.next();
+        }
+        notifyObs(vehiculeList);
+    }
+
     public void notifyObs(Object o){
         setChanged();
-        if(o instanceof RouteList) {
-            notifyObservers(o);
-        }
-        if(o instanceof StopList) {
-            notifyObservers(o);
-        }
+        notifyObservers(o);
     }
 }

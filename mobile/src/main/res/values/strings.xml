@@ -7,4 +7,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="route_id">route_id</string>
+    <string name="title_activity_stop_details">StopDetailsActivity</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

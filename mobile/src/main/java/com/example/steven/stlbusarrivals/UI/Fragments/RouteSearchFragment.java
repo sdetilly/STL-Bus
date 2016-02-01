@@ -30,6 +30,7 @@ public class RouteSearchFragment extends Fragment implements Observer {
     private static RouteList routeList;
     private RouteSearchAdapter routeSearchAdapter;
     private XmlParser xmlparser = new XmlParser();
+
     public RouteSearchFragment() {
         // Required empty public constructor
     }
@@ -37,9 +38,13 @@ public class RouteSearchFragment extends Fragment implements Observer {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         xmlparser.addObserver(this);
+    }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=stl";
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
 
@@ -58,7 +63,7 @@ public class RouteSearchFragment extends Fragment implements Observer {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                //something happened, treat the error.
+                error.printStackTrace();
             }
         });
         queue.add(request);
@@ -83,9 +88,11 @@ public class RouteSearchFragment extends Fragment implements Observer {
                                     int position, long id) {
                 Route item = routeList.get(position);
                 String tag = item.getTag();
+                String routeName = item.getTitle();
 
                 Intent stopSearchIntent = new Intent(getActivity(), StopSearchActivity.class);
                 stopSearchIntent.putExtra("tag",tag);
+                stopSearchIntent.putExtra("routeName",routeName);
                 getActivity().startActivity(stopSearchIntent);
             }
         });
