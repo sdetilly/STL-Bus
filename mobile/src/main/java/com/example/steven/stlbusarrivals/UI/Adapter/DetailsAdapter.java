@@ -7,42 +7,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.example.steven.stlbusarrivals.Model.Details;
 import com.example.steven.stlbusarrivals.Model.TimeList;
 import com.example.steven.stlbusarrivals.R;
-import com.example.steven.stlbusarrivals.VolleySingleton;
-import com.example.steven.stlbusarrivals.XmlParser;
-
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by Steven on 2016-01-28.
  */
-public class DetailsAdapter extends ArrayAdapter<Details>{
+public class DetailsAdapter extends ArrayAdapter<Details> {
 
     private LayoutInflater inflater;
-    private Context context;
-    private String routeTag, stopId, routeName, stopName;
-    private ArrayList<Details> detailsList;
+    private String prediction;
 
     public DetailsAdapter(Context context, int rowLayoutResourceId, ArrayList<Details> list) {
         super(context, rowLayoutResourceId, list);
         this.inflater = LayoutInflater.from(context);
-        this.context = context;
-        detailsList = list;
     }
 
     @SuppressLint("DefaultLocale")
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        routeTag = detailsList.get(position).getTag();
-        stopId = detailsList.get(position).getStopId();
-        routeName = detailsList.get(position).getRouteName();
-        stopName = detailsList.get(position).getStopName();
 
         ViewHolder holder;
         if (view != null) {
@@ -58,12 +44,29 @@ public class DetailsAdapter extends ArrayAdapter<Details>{
         }
 
         Details item = getItem(position);
-        item.getNetPrediction();
-        holder.routeName.setText(item.getTag());
-        holder.stop.setText(" : "+ stopName);
-        //holder.arrivalTime.setText("Next bus in " + item.getTag() + " minutes");
-        holder.prediction.setText(item.getPrediction());
+        prediction = item.getPrediction();
 
+        if(prediction != null){
+            Calendar c = Calendar.getInstance();
+            int currentHour = c.get(Calendar.HOUR_OF_DAY);
+            int currentMinutes = c.get(Calendar.MINUTE);
+                int predictedMinutes = currentMinutes + Integer.valueOf(prediction);
+                while(predictedMinutes >= 60){
+                    currentHour++;
+                    predictedMinutes = predictedMinutes - 60;
+                }
+                if(predictedMinutes < 10){
+                    holder.arrivalTime.setText(currentHour + ":0"+ predictedMinutes);
+                    holder.prediction.setText("   Next bus is in " + prediction + " minutes");
+                }else {
+                    holder.arrivalTime.setText(currentHour + ":"+ predictedMinutes);
+                    holder.prediction.setText("   Next bus is in " + prediction + " minutes");
+                }
+        }else{
+            item.getNetPrediction();
+        }
+        holder.routeName.setText(item.getRouteName());
+        holder.stop.setText(item.getStopName());
         return view;
     }
 

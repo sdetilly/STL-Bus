@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -65,6 +66,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
     @Override
     public void onResume(){
         super.onResume();
+        sendRequest();
+    }
+
+    private void sendRequest(){
         RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
@@ -85,6 +90,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                sendRequest();
             }
         });
         queue.add(request);
@@ -98,22 +104,36 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
             if (vehiculeList.size() != 0) {
                 longitude = vehiculeList.get(0).getLongitude();
                 latitude = vehiculeList.get(0).getLatitude();
+                if(longitude != "false"){
+                mMap.clear();
+                LatLng bus = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+                CameraUpdate center =
+                        CameraUpdateFactory.newLatLng(bus);
+                CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
+
+                mMap.moveCamera(center);
+                mMap.addMarker(new MarkerOptions().position(bus).title("Bus location"));
+                mMap.animateCamera(zoom);
+                }
             }else{
-                LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                latitude= "45.5833";
+                longitude = "-73.7500";
+                mMap.clear();
+                LatLng bus = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+                CameraUpdate center =
+                        CameraUpdateFactory.newLatLng(bus);
+                CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
+
+                mMap.moveCamera(center);
+                mMap.animateCamera(zoom);
+                Toast.makeText(getActivity(), "server did not return vehicle location", Toast.LENGTH_SHORT).show();
+                /*LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
                 Criteria criteria = new Criteria();
                 Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
                 longitude = String.valueOf(location.getLongitude());
-                latitude = String.valueOf(location.getLatitude());
+                latitude = String.valueOf(location.getLatitude());*/
 
             }
-            LatLng bus = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-            CameraUpdate center =
-                    CameraUpdateFactory.newLatLng(bus);
-            CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
-
-            mMap.moveCamera(center);
-            mMap.addMarker(new MarkerOptions().position(bus).title("Bus location"));
-            mMap.animateCamera(zoom);
 
         }
     }

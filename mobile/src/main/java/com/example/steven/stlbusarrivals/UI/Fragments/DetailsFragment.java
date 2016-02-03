@@ -27,6 +27,7 @@ import com.example.steven.stlbusarrivals.XmlParser;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -61,6 +62,10 @@ public class DetailsFragment extends Fragment implements Observer{
     @Override
     public void onResume(){
         super.onResume();
+        sendRequest();
+
+    }
+    private void sendRequest(){
         RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=stl&stopId=" + stopId + "&routeTag=" + routeTag;
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
@@ -81,6 +86,7 @@ public class DetailsFragment extends Fragment implements Observer{
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                sendRequest();
             }
         });
         queue.add(request);
@@ -109,21 +115,44 @@ public class DetailsFragment extends Fragment implements Observer{
                 details.setRouteName(routeName);
                 details.setStopName(stopName);
                 getHelper().getDetailsDao().create(details);
-                Toast.makeText(getActivity()," Stop added to favorites!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), " Stop added to favorites!", Toast.LENGTH_SHORT).show();
             }
         });
         return v;
     }
 
     @Override
-    public void update(Observable observable, Object o) {
+     public void update(Observable observable, Object o) {
         Log.d("detailsfrag update", "entered");
         if(o instanceof TimeList){
             timeList = (TimeList) o;
+            Calendar c = Calendar.getInstance();
+            int currentHour = c.get(Calendar.HOUR_OF_DAY);
+            int currentMinutes = c.get(Calendar.MINUTE);
             if(timeList.size() !=0) {
-                firstPrediction.setText("Next bus is in " + timeList.get(0).getTime() + " minutes");
+                int predictedMinutes = currentMinutes + Integer.valueOf(timeList.get(0).getTime());
+                while(predictedMinutes >= 60){
+                    currentHour++;
+                    predictedMinutes = predictedMinutes - 60;
+                }
+                if(predictedMinutes < 10){
+                    firstPrediction.setText(currentHour + ":0"+ predictedMinutes + "   Next bus is in " + timeList.get(0).getTime() + " minutes");
+                }else {
+                    firstPrediction.setText(currentHour + ":" + predictedMinutes + "   Next bus is in " + timeList.get(0).getTime() + " minutes");
+                }
                 if (timeList.size() > 1) {
-                    secondPrediction.setText("Other bus is in " + timeList.get(1).getTime() + " minutes");
+                    int nextHour = c.get(Calendar.HOUR_OF_DAY);
+                    int nextMinutes = c.get(Calendar.MINUTE);
+                    int nextPredictedMinutes = nextMinutes + Integer.valueOf(timeList.get(1).getTime());
+                    while(nextPredictedMinutes >= 60){
+                        nextHour++;
+                        nextPredictedMinutes = nextPredictedMinutes - 60;
+                    }
+                    if(nextPredictedMinutes <10){
+                        secondPrediction.setText(nextHour + ":0"+ nextPredictedMinutes + "   Other bus is in " + timeList.get(1).getTime() + " minutes");
+                    }else {
+                        secondPrediction.setText(nextHour + ":" + nextPredictedMinutes + "   Other bus is in " + timeList.get(1).getTime() + " minutes");
+                    }
                 }
             }
         }

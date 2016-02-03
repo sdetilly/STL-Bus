@@ -35,6 +35,7 @@ public class Details extends Observable implements Observer{
     @DatabaseField
     String stopName;
 
+
     public Details(){}
 
     public Details(Context context){this.context = context;}
@@ -61,6 +62,8 @@ public class Details extends Observable implements Observer{
 
     public String getPrediction(){return prediction;}
 
+    public void setPredictionNull(){prediction = null;}
+
     public void getNetPrediction(){
         xmlparser.addObserver(this);
         RequestQueue queue = VolleySingleton.getInstance(context).getRequestQueue();
@@ -84,6 +87,7 @@ public class Details extends Observable implements Observer{
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                getNetPrediction();
             }
         });
         queue.add(request);

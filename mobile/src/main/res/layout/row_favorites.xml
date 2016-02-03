@@ -5,27 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TableRow
+
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/tv_row_favorite_route"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        toolsl:text="hello"/>
 
-        <me.grantland.widget.AutofitTextView
-            android:id="@+id/tv_row_favorite_route"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textSize="16sp"
-            toolsl:text="hello"/>
-
-        <me.grantland.widget.AutofitTextView
-            android:id="@+id/tv_row_favorite_stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textSize="16sp"
-            toolsl:text="hello"/>
-
-    </TableRow>
+    <me.grantland.widget.AutofitTextView
+        android:id="@+id/tv_row_favorite_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        toolsl:text="hello"/>
 
     <TableRow
         android:layout_width="wrap_content"
@@ -35,13 +32,13 @@
             android:id="@+id/tv_row_favorite_arrival_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"/>
+            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/tv_row_favorite_prediction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"/>
+            android:textSize="20sp"/>
 
     </TableRow>
 

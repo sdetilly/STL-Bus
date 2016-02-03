@@ -1,6 +1,7 @@
 package com.example.steven.stlbusarrivals;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
@@ -27,106 +28,168 @@ import java.util.Observable;
  */
 public class XmlParser extends Observable{
 
-    public void readRouteXml(String xml)
-            throws XmlPullParserException, IOException
-    {
-        RouteList routeList = new RouteList();
-        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        XmlPullParser xpp = factory.newPullParser();
+    public void readRouteXml(final String xml)
+            throws XmlPullParserException, IOException {
+        new AsyncTask<Void, Void, Void>() {
+            RouteList routeList = new RouteList();
 
-        xpp.setInput( new StringReader( xml ) );
-        int eventType = xpp.getEventType();
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            if(eventType == XmlPullParser.START_DOCUMENT) {
-            } else if(eventType == XmlPullParser.START_TAG) {
-                if(xpp.getName().equals("route")){
-                    Route route = new Route();
-                    route.setTag(xpp.getAttributeValue(0));
-                    route.setTitle(xpp.getAttributeValue(1));
-                    routeList.add(route);
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try{
+                XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                factory.setNamespaceAware(true);
+                XmlPullParser xpp = factory.newPullParser();
+
+                xpp.setInput(new StringReader(xml));
+                int eventType = xpp.getEventType();
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    if (eventType == XmlPullParser.START_DOCUMENT) {
+                    } else if (eventType == XmlPullParser.START_TAG) {
+                        if (xpp.getName().equals("route")) {
+                            Route route = new Route();
+                            route.setTag(xpp.getAttributeValue(0));
+                            route.setTitle(xpp.getAttributeValue(1));
+                            routeList.add(route);
+                        }
+                    }
+                    eventType = xpp.next();
                 }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                return null;
             }
-            eventType = xpp.next();
-        }
-        notifyObs(routeList);
 
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                notifyObs(routeList);
+            }
+
+        }.execute();
     }
 
-    public void readStopXml(String xml)
-            throws XmlPullParserException, IOException
-    {
-        StopList stopList = new StopList();
-        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        XmlPullParser xpp = factory.newPullParser();
+    public void readStopXml(final String xml)
+            throws XmlPullParserException, IOException{
+        new AsyncTask<Void, Void, Void>() {
 
-        xpp.setInput( new StringReader( xml ) );
-        int eventType = xpp.getEventType();
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            if(eventType == XmlPullParser.START_DOCUMENT) {
-            } else if(eventType == XmlPullParser.START_TAG) {
-                if(xpp.getName().equals("stop") && xpp.getAttributeCount()>1){
-                    Stop stop = new Stop();
-                    stop.setTag(xpp.getAttributeValue(0));
-                    stop.setTitle(xpp.getAttributeValue(1));
-                    stop.setId(xpp.getAttributeValue(4));
-                    stopList.add(stop);
+            StopList stopList = new StopList();
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                try {
+                    XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                    factory.setNamespaceAware(true);
+                    XmlPullParser xpp = factory.newPullParser();
+
+                    xpp.setInput(new StringReader(xml));
+                    int eventType = xpp.getEventType();
+                    while (eventType != XmlPullParser.END_DOCUMENT) {
+                        if (eventType == XmlPullParser.START_DOCUMENT) {
+                        } else if (eventType == XmlPullParser.START_TAG) {
+                            if (xpp.getName().equals("stop") && xpp.getAttributeCount() > 1) {
+                                Stop stop = new Stop();
+                                stop.setTag(xpp.getAttributeValue(0));
+                                stop.setTitle(xpp.getAttributeValue(1));
+                                stop.setId(xpp.getAttributeValue(4));
+                                stopList.add(stop);
+                            }
+                        }
+                        eventType = xpp.next();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                return null;
             }
-                eventType = xpp.next();
-        }
-        notifyObs(stopList);
+            @Override
+            protected void onPostExecute (Void aVoid){
+                super.onPostExecute(aVoid);
+                notifyObs(stopList);
+            }
+        }.execute();
     }
 
-    public void readPrediction(String xml)
+    public void readPrediction(final String xml)
             throws XmlPullParserException, IOException
     {
-        TimeList timeList = new TimeList();
-        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        XmlPullParser xpp = factory.newPullParser();
+        new AsyncTask<Void, Void, Void>() {
+            TimeList timeList = new TimeList();
 
-        xpp.setInput( new StringReader( xml ) );
-        int eventType = xpp.getEventType();
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            if(eventType == XmlPullParser.START_DOCUMENT) {
-            } else if(eventType == XmlPullParser.START_TAG) {
-                if(xpp.getName().equals("prediction")){
-                    TimePrediction timePrediction = new TimePrediction();
-                    timePrediction.setTime(xpp.getAttributeValue(2));
-                    timeList.add(timePrediction);
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                try {
+                    XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                    factory.setNamespaceAware(true);
+                    XmlPullParser xpp = factory.newPullParser();
+
+                    xpp.setInput(new StringReader(xml));
+                    int eventType = xpp.getEventType();
+                    while (eventType != XmlPullParser.END_DOCUMENT) {
+                        if (eventType == XmlPullParser.START_DOCUMENT) {
+                        } else if (eventType == XmlPullParser.START_TAG) {
+                            if (xpp.getName().equals("prediction")) {
+                                TimePrediction timePrediction = new TimePrediction();
+                                timePrediction.setTime(xpp.getAttributeValue(2));
+                                timeList.add(timePrediction);
+                            }
+                        }
+                        eventType = xpp.next();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                return null;
             }
-            eventType = xpp.next();
-        }
-        notifyObs(timeList);
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                notifyObs(timeList);
+            }
+        }.execute();
     }
 
-    public void readLocation(String xml)
+    public void readLocation(final String xml)
             throws XmlPullParserException, IOException
     {
-        VehiculeList vehiculeList = new VehiculeList();
-        XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-        factory.setNamespaceAware(true);
-        XmlPullParser xpp = factory.newPullParser();
+        new AsyncTask<Void, Void, Void>() {
+            VehiculeList vehiculeList = new VehiculeList();
 
-        xpp.setInput( new StringReader( xml ) );
-        int eventType = xpp.getEventType();
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            if(eventType == XmlPullParser.START_DOCUMENT) {
-            } else if(eventType == XmlPullParser.START_TAG) {
-                System.out.println(xpp.getName());
-                if(xpp.getName().equals("vehicle")){
-                    Vehicule vehicule = new Vehicule();
-                    vehicule.setLongitude(xpp.getAttributeValue(4));
-                    vehicule.setLatitude(xpp.getAttributeValue(3));
-                    vehiculeList.add(vehicule);
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                    factory.setNamespaceAware(true);
+                    XmlPullParser xpp = factory.newPullParser();
+
+                    xpp.setInput(new StringReader(xml));
+                    int eventType = xpp.getEventType();
+                    while (eventType != XmlPullParser.END_DOCUMENT) {
+                        if (eventType == XmlPullParser.START_DOCUMENT) {
+                        } else if (eventType == XmlPullParser.START_TAG) {
+                            if (xpp.getName().equals("vehicle")) {
+                                Vehicule vehicule = new Vehicule();
+                                vehicule.setLongitude(xpp.getAttributeValue(4));
+                                vehicule.setLatitude(xpp.getAttributeValue(3));
+                                vehiculeList.add(vehicule);
+                            }
+                        }
+                        eventType = xpp.next();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                return null;
             }
-            eventType = xpp.next();
-        }
-        notifyObs(vehiculeList);
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                notifyObs(vehiculeList);
+            }
+        }.execute();
     }
 
     public void notifyObs(Object o){

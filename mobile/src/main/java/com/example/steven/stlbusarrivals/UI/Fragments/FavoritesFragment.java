@@ -63,7 +63,7 @@ public class FavoritesFragment extends Fragment implements Observer{
         detailsList = getAllOrderedDetails();
         for(int i=0; i<detailsList.size(); i++){
             Log.d("favoritefrag", "adding observers...");
-            detailsList.get(i).addObserver(this); // i think i need to create different variable for it to work....
+            detailsList.get(i).addObserver(this);
         }
         detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);
         listView.setAdapter(detailsAdapter);
@@ -146,17 +146,13 @@ public class FavoritesFragment extends Fragment implements Observer{
     @Override
     public void onResume(){
         super.onResume();
-        detailsList = getAllOrderedDetails();
-        this.detailsAdapter.clear();
-        this.detailsAdapter.addAll(detailsList);
-        this.detailsAdapter.notifyDataSetChanged();
     }
 
     private void deleteDetails(){
         getHelper().getDetailsDao().deleteById(this.lastClickedDetailsId);
-        ArrayList<Details> details = getAllOrderedDetails();
+        detailsList = getAllOrderedDetails();
         this.detailsAdapter.clear();
-        this.detailsAdapter.addAll(details);
+        this.detailsAdapter.addAll(detailsList);
         this.detailsAdapter.notifyDataSetChanged();
         Log.i(MainActivity.class.getName(), String.valueOf(this.lastClickedDetailsId));
     }
@@ -164,10 +160,7 @@ public class FavoritesFragment extends Fragment implements Observer{
     @Override
     public void update(Observable observable, Object o) {
         Log.d("favoritesfrag update", "entered");
-            ArrayList<Details> details = getAllOrderedDetails();
-            this.detailsAdapter.clear();
-            this.detailsAdapter.addAll(details);
-            this.detailsAdapter.notifyDataSetChanged();
-
+        this.detailsAdapter.notifyDataSetChanged();
+        listView.setAdapter(detailsAdapter);
     }
 }

@@ -39,11 +39,10 @@ public class RouteSearchFragment extends Fragment implements Observer {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         xmlparser.addObserver(this);
+        sendRequest();
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
+    private void sendRequest(){
         RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=stl";
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
@@ -64,6 +63,7 @@ public class RouteSearchFragment extends Fragment implements Observer {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                sendRequest();
             }
         });
         queue.add(request);

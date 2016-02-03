@@ -49,6 +49,10 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
             routeName = savedInstanceState.getString("routeName");
         }
         setTitle(routeName);
+        sendRequest();
+    }
+
+    private void sendRequest(){
         RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
         xmlparser.addObserver(this);
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
@@ -70,6 +74,7 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                sendRequest();
             }
         });
         queue.add(request);
