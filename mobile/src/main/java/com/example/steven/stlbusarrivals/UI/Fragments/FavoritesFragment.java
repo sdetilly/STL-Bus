@@ -19,6 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.steven.stlbusarrivals.Dao.DatabaseHelper;
 import com.example.steven.stlbusarrivals.Model.Details;
+import com.example.steven.stlbusarrivals.Model.Point;
 import com.example.steven.stlbusarrivals.Model.Stop;
 import com.example.steven.stlbusarrivals.Model.TimeList;
 import com.example.steven.stlbusarrivals.R;
@@ -66,8 +67,6 @@ public class FavoritesFragment extends Fragment implements Observer{
             detailsList.get(i).addObserver(this);
         }
         detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);
-        listView.setAdapter(detailsAdapter);
-        detailsAdapter.notifyDataSetChanged();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -146,6 +145,11 @@ public class FavoritesFragment extends Fragment implements Observer{
     @Override
     public void onResume(){
         super.onResume();
+        for(int i=detailsList.size()-1; i>0; i--){
+            detailsList.get(i).setPredictionNull();
+        }
+        listView.setAdapter(detailsAdapter);
+        detailsAdapter.notifyDataSetChanged();
     }
 
     private void deleteDetails(){

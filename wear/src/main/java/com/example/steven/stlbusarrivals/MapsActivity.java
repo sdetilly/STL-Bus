@@ -1,18 +1,37 @@
 package com.example.steven.stlbusarrivals;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.wearable.view.DismissOverlayView;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.StringReader;
 
 public class MapsActivity extends Activity implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener {
@@ -23,12 +42,12 @@ public class MapsActivity extends Activity implements OnMapReadyCallback,
      */
     private DismissOverlayView mDismissOverlay;
 
-    /**
-     * The map. It is initialized when the map has been fully loaded and is ready to be used.
-     *
-     * @see #onMapReady(com.google.android.gms.maps.GoogleMap)
-     */
     private GoogleMap mMap;
+
+    private String longitude, latitude;
+
+    private static Path path = new Path();
+    private static PathList pathList = new PathList();
 
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
@@ -73,20 +92,80 @@ public class MapsActivity extends Activity implements OnMapReadyCallback,
                 (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
+        MessageReceiver messageReceiver = new MessageReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
+
+    }
+
+    public class MessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String message = intent.getStringExtra("message");
+            final String[] separated = message.split("[+]");
+            if(separated[0].equals("vehicule")) {
+                latitude = separated[1];
+                longitude = separated[2];
+
+                    if(!longitude.equals("false")){
+                        mMap.clear();
+                        LatLng bus = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
+                        mMap.addMarker(new MarkerOptions().position(bus).title("Bus location"));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(bus));
+
+                }else{
+                    mMap.clear();
+                    Toast.makeText(MapsActivity.this, "server did not return vehicle location", Toast.LENGTH_SHORT).show();
+                }
+            }
+            if(separated[0].equals("pathbounds")){
+                LatLngBounds bounds = new LatLngBounds(
+                        new LatLng(Double.valueOf(separated[1]), Double.valueOf(separated[2])),
+                        new LatLng(Double.valueOf(separated[3]), Double.valueOf(separated[4])));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
+            }
+            if(separated[0].equals("point")){
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        if(!separated[1].equals("end")) {
+                            Point point = new Point(message);
+                            path.add(point);
+                        }
+                        if(separated[1].equals("end")){
+                            pathList.add(path);
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+                        for(int j=pathList.size()-1; j>=0; j--) {
+                            for (int i = pathList.get(j).size() - 1; i > 0; i--) {
+
+                                mMap.addPolyline(new PolylineOptions()
+                                        .add(pathList.get(j).get(i).getLatLng(), pathList.get(j).get(i - 1).getLatLng())
+                                        .width(5)
+                                        .color(Color.BLUE));
+                            }
+                        }
+                    }
+                }.execute();
+
+            }
+            /*if(separated[0].equals("path")){
+            }*/
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // Map is ready to be used.
         mMap = googleMap;
-
         // Set the long click listener as a way to exit the map.
         mMap.setOnMapLongClickListener(this);
-
-        // Add a marker in Sydney, Australia and move the camera.
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.setMyLocationEnabled(true);
     }
 
     @Override

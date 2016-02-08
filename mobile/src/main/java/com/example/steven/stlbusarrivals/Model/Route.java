@@ -15,7 +15,10 @@ public class Route {
 
     public String getTitle(){return title;}
 
-    public String getName(){return tag + " " + title.replace("Direction", "");}
+    public String getName(){
+        String[] separated = title.split(" ",2);
+        return tag + " " + separated[1];
+    }
 
     public void setTag(String tag){this.tag = tag;}
 

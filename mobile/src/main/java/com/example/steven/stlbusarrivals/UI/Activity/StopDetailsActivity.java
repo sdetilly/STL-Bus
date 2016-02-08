@@ -1,34 +1,18 @@
 package com.example.steven.stlbusarrivals.UI.Activity;
 
-import android.Manifest;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.example.steven.stlbusarrivals.Model.VehiculeList;
+import com.example.steven.stlbusarrivals.Model.Path;
+import com.example.steven.stlbusarrivals.Model.Point;
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.UI.Fragments.DetailsFragment;
-import com.example.steven.stlbusarrivals.UI.Fragments.FavoritesFragment;
 import com.example.steven.stlbusarrivals.UI.Fragments.MapsFragment;
-import com.example.steven.stlbusarrivals.UI.Fragments.RouteSearchFragment;
-import com.example.steven.stlbusarrivals.VolleySingleton;
-import com.example.steven.stlbusarrivals.XmlParser;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.util.ArrayList;
 
 public class StopDetailsActivity extends AppCompatActivity{
 

@@ -14,6 +14,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.steven.stlbusarrivals.Model.PathList;
 import com.example.steven.stlbusarrivals.Model.Route;
 import com.example.steven.stlbusarrivals.Model.Stop;
 import com.example.steven.stlbusarrivals.Model.StopList;
@@ -32,7 +33,6 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
 
     private ListView listView;
     private static StopList stopList;
-    private StopSearchAdapter stopSearchAdapter;
     private XmlParser xmlparser = new XmlParser();
 
     @Override
@@ -55,7 +55,7 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
     private void sendRequest(){
         RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
         xmlparser.addObserver(this);
-        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
+        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag + "&terse";
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
 
             @Override
@@ -87,6 +87,7 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
     }
 
     public void refreshList(){
+        StopSearchAdapter stopSearchAdapter;
         stopSearchAdapter = new StopSearchAdapter(this, R.layout.row_stop_search_list, stopList);
         listView.setAdapter(stopSearchAdapter);
         stopSearchAdapter.notifyDataSetChanged();
@@ -96,7 +97,7 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
                                     int position, long id) {
                 Stop item = stopList.get(position);
                 String stopId = item.getId();
-                String stopName = item.getName();
+                String stopName = item.getTitle();
 
                 Intent stopSearchIntent = new Intent(getBaseContext(), StopDetailsActivity.class);
                 stopSearchIntent.putExtra("stopId", stopId);

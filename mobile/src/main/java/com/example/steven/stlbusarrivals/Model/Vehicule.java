@@ -18,4 +18,8 @@ public class Vehicule {
     public void setLongitude(String longitude){this.longitude = longitude;}
 
     public void setLatitude(String latitude){this.latitude = latitude;}
+
+    public String sendToWearable(){
+        return "vehicule+" + latitude + "+" + longitude;
+    }
 }

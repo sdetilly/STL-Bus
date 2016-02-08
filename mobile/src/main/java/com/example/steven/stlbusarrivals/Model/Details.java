@@ -54,7 +54,9 @@ public class Details extends Observable implements Observer{
 
     public void setRouteName(String routeName){this.routeName = routeName;}
 
-    public String getStopName(){return stopName;}
+    public String getStopName(){
+        String[] separated = stopName.split(" ",2);
+        return stopName;}
 
     public void setStopName(String stopName){this.stopName = stopName;}
 
@@ -63,6 +65,11 @@ public class Details extends Observable implements Observer{
     public String getPrediction(){return prediction;}
 
     public void setPredictionNull(){prediction = null;}
+
+    public String sendToWearable(){
+        String[] separated = stopName.split(" ",2);
+        return "details+" + routeName + "+" + stopName + "+" + prediction + "+" + routeTag;
+    }
 
     public void getNetPrediction(){
         xmlparser.addObserver(this);
@@ -100,10 +107,11 @@ public class Details extends Observable implements Observer{
             timeList = (TimeList) o;
             if(timeList.size() > 0) {
                 this.setPrediction(timeList.get(0).getTime());
-                setChanged();
-                notifyObservers(timeList);
-                Log.d("unitDetails", "This detail's prediction is : "+ this.getPrediction());
+
             }
+            setChanged();
+            notifyObservers(timeList);
+            Log.d("unitDetails", "This detail's prediction is : "+ this.getPrediction());
         }
     }
 }

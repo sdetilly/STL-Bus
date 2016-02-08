@@ -1,11 +1,12 @@
 package com.example.steven.stlbusarrivals.UI.Fragments;
 
-import android.content.Context;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,10 +17,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.steven.stlbusarrivals.Model.TimeList;
+import com.example.steven.stlbusarrivals.Model.PathBounds;
+import com.example.steven.stlbusarrivals.Model.PathList;
+import com.example.steven.stlbusarrivals.Model.Point;
 import com.example.steven.stlbusarrivals.Model.VehiculeList;
 import com.example.steven.stlbusarrivals.R;
-import com.example.steven.stlbusarrivals.UI.Adapter.DetailsAdapter;
 import com.example.steven.stlbusarrivals.VolleySingleton;
 import com.example.steven.stlbusarrivals.XmlParser;
 import com.google.android.gms.maps.CameraUpdate;
@@ -28,8 +30,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -41,9 +46,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
     public MapsFragment(){}
 
     private GoogleMap mMap;
+    private ArrayList<ArrayList<Point>> pathList;
     private static VehiculeList vehiculeList;
     private XmlParser xmlparser = new XmlParser();
     private String longitude, latitude, routeTag;
+    private PathBounds pathBounds;
 
 
     @Override
@@ -51,6 +58,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
         super.onCreate(savedInstanceState);
         xmlparser.addObserver(this);
         routeTag = getArguments().getString("routeTag");
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,10 +74,38 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
     @Override
     public void onResume(){
         super.onResume();
-        sendRequest();
+        sendPathRequest();
     }
 
-    private void sendRequest(){
+    private void sendPathRequest(){
+        RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
+        xmlparser.addObserver(this);
+        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
+        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                // we got the response, now our job is to handle it
+                //parseXmlResponse(response);
+                try{
+                    xmlparser.readStopXml(response);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                sendPathRequest();
+            }
+        });
+        queue.add(request);
+    }
+
+    private void sendDetailRequest(){
         RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
@@ -90,7 +126,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                sendRequest();
+                sendDetailRequest();
             }
         });
         queue.add(request);
@@ -98,46 +134,41 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
 
     @Override
     public void update(Observable observable, Object o) {
-        Log.d("mapfrag update", "entered");
         if(o instanceof VehiculeList) {
             vehiculeList = (VehiculeList) o;
+            LatLngBounds bounds = new LatLngBounds(
+                    pathBounds.getMinBounds(), pathBounds.getMaxBounds());
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
             if (vehiculeList.size() != 0) {
                 longitude = vehiculeList.get(0).getLongitude();
                 latitude = vehiculeList.get(0).getLatitude();
-                if(longitude != "false"){
+                if(!longitude.equals("false")){
                 mMap.clear();
                 LatLng bus = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-                CameraUpdate center =
-                        CameraUpdateFactory.newLatLng(bus);
-                CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
-
-                mMap.moveCamera(center);
                 mMap.addMarker(new MarkerOptions().position(bus).title("Bus location"));
-                mMap.animateCamera(zoom);
                 }
             }else{
-                latitude= "45.5833";
-                longitude = "-73.7500";
                 mMap.clear();
-                LatLng bus = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
-                CameraUpdate center =
-                        CameraUpdateFactory.newLatLng(bus);
-                CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
-
-                mMap.moveCamera(center);
-                mMap.animateCamera(zoom);
                 Toast.makeText(getActivity(), "server did not return vehicle location", Toast.LENGTH_SHORT).show();
-                /*LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                Criteria criteria = new Criteria();
-                Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-                longitude = String.valueOf(location.getLongitude());
-                latitude = String.valueOf(location.getLatitude());*/
-
             }
+            for(int j=pathList.size()-1; j>=0; j--) {
+                for (int i = pathList.get(j).size() - 1; i > 0; i--) {
 
+                    mMap.addPolyline(new PolylineOptions()
+                            .add(pathList.get(j).get(i).getLatLng(), pathList.get(j).get(i - 1).getLatLng())
+                            .width(5)
+                            .color(Color.BLUE));
+                }
+            }
+        }
+        if(o instanceof PathList){
+            pathList = (ArrayList<ArrayList<Point>>) o;
+            sendDetailRequest();
+        }
+        if(o instanceof PathBounds){
+            pathBounds = (PathBounds) o;
         }
     }
-
 
     /**
      * Manipulates the map once available.
@@ -151,7 +182,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         mMap.setMyLocationEnabled(true);
 
     }

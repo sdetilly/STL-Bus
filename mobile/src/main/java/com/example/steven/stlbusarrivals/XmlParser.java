@@ -1,11 +1,12 @@
 package com.example.steven.stlbusarrivals;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
+import com.example.steven.stlbusarrivals.Model.Path;
+import com.example.steven.stlbusarrivals.Model.PathBounds;
+import com.example.steven.stlbusarrivals.Model.Point;
+import com.example.steven.stlbusarrivals.Model.PathList;
 import com.example.steven.stlbusarrivals.Model.Route;
 import com.example.steven.stlbusarrivals.Model.RouteList;
 import com.example.steven.stlbusarrivals.Model.Stop;
@@ -74,6 +75,8 @@ public class XmlParser extends Observable{
         new AsyncTask<Void, Void, Void>() {
 
             StopList stopList = new StopList();
+            PathList pathList = new PathList();
+            PathBounds pathBounds = new PathBounds();
             @Override
             protected Void doInBackground(Void... voids) {
 
@@ -87,6 +90,12 @@ public class XmlParser extends Observable{
                     while (eventType != XmlPullParser.END_DOCUMENT) {
                         if (eventType == XmlPullParser.START_DOCUMENT) {
                         } else if (eventType == XmlPullParser.START_TAG) {
+                            if(xpp.getName().equals("route")){
+                                pathBounds.setLatMin(Double.valueOf(xpp.getAttributeValue(4)));
+                                pathBounds.setLatMax(Double.valueOf(xpp.getAttributeValue(5)));
+                                pathBounds.setLongMin(Double.valueOf(xpp.getAttributeValue(6)));
+                                pathBounds.setLongMax(Double.valueOf(xpp.getAttributeValue(7)));
+                            }
                             if (xpp.getName().equals("stop") && xpp.getAttributeCount() > 1) {
                                 Stop stop = new Stop();
                                 stop.setTag(xpp.getAttributeValue(0));
@@ -94,9 +103,23 @@ public class XmlParser extends Observable{
                                 stop.setId(xpp.getAttributeValue(4));
                                 stopList.add(stop);
                             }
+                            if(xpp.getName().equals("path")){
+                                Path path = new Path();
+                                while(eventType != XmlPullParser.END_TAG || (xpp.getName() !=null && xpp.getName().equals("point"))) {
+                                    if(xpp.getName() != null && xpp.getName().equals("point")) {
+                                        Point point = new Point();
+                                        point.setLatitude(Double.valueOf(xpp.getAttributeValue(0)));
+                                        point.setLongitude(Double.valueOf(xpp.getAttributeValue(1)));
+                                        path.add(point);
+                                    }
+                                    eventType = xpp.next();
+                                }
+                                pathList.add(path);
+                            }
                         }
                         eventType = xpp.next();
                     }
+                    Log.d("doInBackground", "finished");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -105,7 +128,10 @@ public class XmlParser extends Observable{
             @Override
             protected void onPostExecute (Void aVoid){
                 super.onPostExecute(aVoid);
+                Log.d("onPostExecute", "notifying observers");
                 notifyObs(stopList);
+                notifyObs(pathList);
+                notifyObs(pathBounds);
             }
         }.execute();
     }

@@ -1,21 +1,18 @@
-package com.example.steven.stlbusarrivals.UI.Adapter;
+package com.example.steven.stlbusarrivals;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.example.steven.stlbusarrivals.Model.Details;
-import com.example.steven.stlbusarrivals.Model.TimeList;
-import com.example.steven.stlbusarrivals.R;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
- * Created by Steven on 2016-01-28.
+ * Created by Steven on 2016-02-05.
  */
 public class DetailsAdapter extends ArrayAdapter<Details> {
 
@@ -47,24 +44,22 @@ public class DetailsAdapter extends ArrayAdapter<Details> {
         Details item = getItem(position);
         prediction = item.getPrediction();
 
-        if(prediction != null){
+        if(!prediction.equals("null")){
             Calendar c = Calendar.getInstance();
             int currentHour = c.get(Calendar.HOUR_OF_DAY);
             int currentMinutes = c.get(Calendar.MINUTE);
-                int predictedMinutes = currentMinutes + Integer.valueOf(prediction);
-                while(predictedMinutes >= 60){
-                    currentHour++;
-                    predictedMinutes = predictedMinutes - 60;
-                }
-                if(predictedMinutes < 10){
-                    holder.arrivalTime.setText(currentHour + ":0"+ predictedMinutes);
-                    holder.prediction.setText("   Next bus is in " + prediction + " minutes");
-                }else {
-                    holder.arrivalTime.setText(currentHour + ":"+ predictedMinutes);
-                    holder.prediction.setText("   Next bus is in " + prediction + " minutes");
-                }
-        }else{
-            item.getNetPrediction();
+            int predictedMinutes = currentMinutes + Integer.valueOf(prediction);
+            while(predictedMinutes >= 60){
+                currentHour++;
+                predictedMinutes = predictedMinutes - 60;
+            }
+            if(predictedMinutes < 10){
+                holder.arrivalTime.setText(currentHour + ":0"+ predictedMinutes);
+                holder.prediction.setText("   in " + prediction + " minutes");
+            }else {
+                holder.arrivalTime.setText(currentHour + ":"+ predictedMinutes);
+                holder.prediction.setText("   in " + prediction + " minutes");
+            }
         }
         holder.routeName.setText(item.getRouteName());
         holder.stop.setText(item.getStopName());
