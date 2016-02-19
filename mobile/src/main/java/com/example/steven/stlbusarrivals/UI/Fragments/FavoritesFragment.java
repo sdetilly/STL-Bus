@@ -61,12 +61,7 @@ public class FavoritesFragment extends Fragment implements Observer{
                              Bundle savedInstanceState) {
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.fragment_favorites, container, false);
         listView = (ListView)v.findViewById(R.id.list_favorite);
-        detailsList = getAllOrderedDetails();
-        for(int i=0; i<detailsList.size(); i++){
-            Log.d("favoritefrag", "adding observers...");
-            detailsList.get(i).addObserver(this);
-        }
-        detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -145,9 +140,17 @@ public class FavoritesFragment extends Fragment implements Observer{
     @Override
     public void onResume(){
         super.onResume();
-        for(int i=detailsList.size()-1; i>0; i--){
-            detailsList.get(i).setPredictionNull();
+        detailsList = getAllOrderedDetails();
+        if(detailsList.size() >0 && detailsList != null) {
+            for (int i = 0; i < detailsList.size(); i++) {
+                Log.d("favoritefrag", "adding observers...");
+                detailsList.get(i).addObserver(this);
+            }
+            for (int i = detailsList.size() - 1; i > 0; i--) {
+                detailsList.get(i).setPredictionNull();
+            }
         }
+        detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);
         listView.setAdapter(detailsAdapter);
         detailsAdapter.notifyDataSetChanged();
     }
