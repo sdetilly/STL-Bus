@@ -6,7 +6,7 @@ Lastly, the app will send your favorite bus stop to your android wear device, wh
 the scheduled arrival times of your favorite stops and look at the bus location in a small map.
 
 <img src="/img/Favorites.png" width="350">
-<img src="/img/Stop Details.png" width="350">
-<img src="/img/mobile map.png" width="350">
-<img src="/img/watch favorites.png" width="350">
-<img src="/img/watch map.png" width="350">
+<img src="/img/Stop%Details.png" width="350">
+<img src="/img/mobile%map.png" width="350">
+<img src="/img/watch%favorites.png" width="350">
+<img src="/img/watch%map.png" width="350">
