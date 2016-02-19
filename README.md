@@ -6,3 +6,4 @@ Lastly, the app will send your favorite bus stop to your android wear device, wh
 the scheduled arrival times of your favorite stops and look at the bus location in a small map.
 
 ![STL-Bus Favorites](/img/Favorites.png)
+<img src="/img/Favorites.png" width="48">
