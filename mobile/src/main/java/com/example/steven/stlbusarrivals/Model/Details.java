@@ -47,6 +47,7 @@ public class Details extends Observable implements Observer{
         map.putString("stopId", stopId);
         map.putString("routeName", routeName);
         map.putString("stopName", stopName);
+        map.putString("prediction", prediction);
         return map;
     }
 
