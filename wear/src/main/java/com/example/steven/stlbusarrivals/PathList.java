@@ -10,10 +10,12 @@ import java.util.ArrayList;
 public class PathList extends ArrayList<Path> {
 
     public void setData(DataMap map){
-        for(int i = 0; i<this.size(); i++){
-            DataMap pathMap;
-            pathMap = map.getDataMap("path"+i);
-            this.get(i).setData(pathMap);
+        if(map.size() > 0) {
+            for (int i = 0; i < map.size(); i++) {
+                DataMap pathMap;
+                pathMap = map.getDataMap("path" + i);
+                this.add(new Path(pathMap));
+            }
         }
     }
 }

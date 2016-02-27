@@ -64,7 +64,7 @@ public class DetailsAdapter extends ArrayAdapter<Details> {
                     holder.prediction.setText("   Next bus is in " + prediction + " minutes");
                 }
         }else{
-            item.getNetPrediction();
+            holder.arrivalTime.setText(" there are no buses at this current time");
         }
         holder.routeName.setText(item.getRouteName());
         holder.stop.setText(item.getStopName());

@@ -145,14 +145,12 @@ public class FavoritesFragment extends Fragment implements Observer{
             for (int i = 0; i < detailsList.size(); i++) {
                 Log.d("favoritefrag", "adding observers...");
                 detailsList.get(i).addObserver(this);
-            }
-            for (int i = detailsList.size() - 1; i > 0; i--) {
-                detailsList.get(i).setPredictionNull();
+                detailsList.get(i).getNetPrediction();
             }
         }
         detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);
-        listView.setAdapter(detailsAdapter);
-        detailsAdapter.notifyDataSetChanged();
+        /*listView.setAdapter(detailsAdapter);
+        detailsAdapter.notifyDataSetChanged();*/
     }
 
     private void deleteDetails(){

@@ -9,11 +9,13 @@ import java.util.ArrayList;
  */
 public class Path extends ArrayList<Point> {
 
-    public void setData(DataMap map){
-        for(int i = 0; i<this.size(); i++){
-            DataMap pointMap;
-            pointMap = map.getDataMap("point"+i);
-            this.get(i).setData(pointMap);
+    public Path(DataMap map){
+        if(map.size() > 0) {
+            for (int i = 0; i < map.size(); i++) {
+                DataMap pointMap;
+                pointMap = map.getDataMap("point" + i);
+                this.add(new Point(pointMap));
+            }
         }
     }
 }

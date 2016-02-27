@@ -56,7 +56,6 @@ public class MapsActivity extends Activity implements OnMapReadyCallback, Google
 
     private String longitude, latitude;
 
-    private static Path path = new Path();
     private static PathList pathList = new PathList();
 
     public void onCreate(Bundle savedState) {
@@ -156,7 +155,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback, Google
                     LatLngBounds bounds = new LatLngBounds(
                             new LatLng(latMin,longMin),
                             new LatLng(latMax,longMax));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 30));
                 }
             }
             if(event.getDataItem().getUri().getPath().equals("/maps_pathList")) {
@@ -173,7 +172,7 @@ public class MapsActivity extends Activity implements OnMapReadyCallback, Google
 
                             mMap.addPolyline(new PolylineOptions()
                                     .add(pathList.get(j).get(i).getLatLng(), pathList.get(j).get(i - 1).getLatLng())
-                                    .width(5)
+                                    .width(3)
                                     .color(Color.BLUE));
                         }
                     }

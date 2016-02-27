@@ -44,7 +44,7 @@ public class DetailsAdapter extends ArrayAdapter<Details> {
         Details item = getItem(position);
         prediction = item.getPrediction();
 
-        if(!prediction.equals("null")){
+        if(prediction != null){
             Calendar c = Calendar.getInstance();
             int currentHour = c.get(Calendar.HOUR_OF_DAY);
             int currentMinutes = c.get(Calendar.MINUTE);
@@ -60,6 +60,9 @@ public class DetailsAdapter extends ArrayAdapter<Details> {
                 holder.arrivalTime.setText(currentHour + ":"+ predictedMinutes);
                 holder.prediction.setText("   in " + prediction + " minutes");
             }
+        }
+        else{
+            holder.arrivalTime.setText("No buses at this current time");
         }
         holder.routeName.setText(item.getRouteName());
         holder.stop.setText(item.getStopName());

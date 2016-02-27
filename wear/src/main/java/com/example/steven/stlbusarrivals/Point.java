@@ -10,7 +10,10 @@ public class Point {
 
     double latitude, longitude;
 
-    public Point(){}
+    public Point(DataMap map){
+        longitude = map.getDouble("longitude");
+        latitude = map.getDouble("latitude");
+    }
 
     /*public Point(String object){
         if (null != object && object.length() > 0 )
@@ -25,8 +28,8 @@ public class Point {
         return new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
     }
 
-    public void setData(DataMap map){
+    /*public void setData(DataMap map) {
         map.getDouble("longitude", longitude);
         map.getDouble("latitude", latitude);
-    }
+    }*/
 }
