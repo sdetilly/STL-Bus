@@ -233,28 +233,20 @@ public class WearService extends WearableListenerService  implements Observer {
             if(vehiculeList.size() > 0) {
                 DataMap vehiculeMap = new DataMap();
                 vehiculeMap.putDataMap("vehicule", vehiculeList.get(0).putData());
-                new SendToDataLayerThread("/maps_send", vehiculeMap).start();
+                new SendToDataLayerThread("/maps_vehicule", vehiculeMap).start();
             }
         }
         if(o instanceof PathBounds){
             PathBounds pathBounds = (PathBounds) o;
             DataMap pathMap = new DataMap();
             pathMap.putDataMap("pathBounds",pathBounds.putData());
-            new SendToDataLayerThread("/maps_send", pathMap).start();
+            new SendToDataLayerThread("/maps_pathBounds", pathMap).start();
         }
-        /*if(o instanceof PathList){
+        if(o instanceof PathList) {
             PathList pathList = (PathList) o;
-            for (int i = 0; i < pathList.size(); i++) {
-                for (int j = 0; j < pathList.get(i).size(); j++) {
-                    new SendToDataLayerThread("/maps_send", pathList.get(i).get(j).sendToWearable()).start();
-                    if (j == pathList.get(1).size() - 1) {
-                        new SendToDataLayerThread("/maps_send", "point+end").start();
-                    }
-                }
-                if (i == pathList.size() - 1) {
-                    new SendToDataLayerThread("/maps_send", "path+end").start();
-                }
-            }
-        }*/
+            DataMap pathMap = new DataMap();
+            pathMap.putDataMap("pathList", pathList.putData());
+            new SendToDataLayerThread("/maps_pathList", pathMap).start();
+        }
     }
 }

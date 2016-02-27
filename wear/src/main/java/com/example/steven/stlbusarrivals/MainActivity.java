@@ -67,11 +67,10 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
                 String stopName = item.getStopName();
                 String routeTag = item.getRouteTag();
                 String routeName = item.getRouteName();
-                new SendToDataLayerThread("/maps_req", routeTag).start();
 
                 Intent stopSearchIntent = new Intent(getBaseContext(), MapsActivity.class);
                 //stopSearchIntent.putExtra("stopId", stopId);
-                //stopSearchIntent.putExtra("routeTag", routeTag);
+                stopSearchIntent.putExtra("routeTag", routeTag);
                 //stopSearchIntent.putExtra("routeName", routeName);
                 //stopSearchIntent.putExtra("stopName", stopName);
                 startActivity(stopSearchIntent);
@@ -97,8 +96,8 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     @Override
     public void onConnected(Bundle bundle) {
         Wearable.DataApi.addListener(googleClient, this);
-        Wearable.MessageApi.addListener(googleClient,this);
-        new SendToDataLayerThread("/details_req", "message").start();
+        Wearable.MessageApi.addListener(googleClient, this);
+        new SendToDataLayerThread(googleClient,"/details_req", "message").start();
     }
 
     @Override
@@ -112,18 +111,19 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
         Log.v("onDataChanged", "entered successfully" );
         for (DataEvent event : dataEvents)
         {
-            Log.v("onDataChanged", "entered for with " + event.getType() );
-
-            DataItem item = event.getDataItem();
-            DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-            if(!dataMap.get("map").equals("")) {
-                DataMap mMap = dataMap.getDataMap("map");
-                for (int i = 0; i < mMap.size(); i++){
-                    Details details = new Details();
-                    details.setData(mMap.getDataMap("detail"+i));
-                    detailsList.add(details);
+            Log.v("onDataChanged", "entered for with " + event.getDataItem().getUri().getPath() );
+            if(event.getDataItem().getUri().getPath().equals("/details_send")) {
+                DataItem item = event.getDataItem();
+                DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                if (!dataMap.get("map").equals("")) {
+                    DataMap mMap = dataMap.getDataMap("map");
+                    for (int i = 0; i < mMap.size(); i++) {
+                        Details details = new Details();
+                        details.setData(mMap.getDataMap("detail" + i));
+                        detailsList.add(details);
+                    }
+                    listView.setAdapter(new DetailsAdapter(getBaseContext(), R.layout.row_favorites, detailsList));
                 }
-                listView.setAdapter(new DetailsAdapter(getBaseContext(), R.layout.row_favorites, detailsList));
             }
         }
     }
@@ -136,26 +136,6 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
 
-        /*if (messageEvent.getPath().equals("/details_send")) {
-            final String message = new String(messageEvent.getData());
-
-            String[] separated = message.split("[+]");
-            if(separated[0].equals("details")) {
-                Log.v("wearMainAct", "Main activity received message: " + message);
-                Details details = new Details(message);
-                detailsList.add(details);
-                listView.setAdapter(new DetailsAdapter(getBaseContext(), R.layout.row_favorites, detailsList));
-                // Display message in UI
-            }
-        }else if (messageEvent.getPath().equals("/maps_send")){
-            final String message = new String(messageEvent.getData());
-
-            // Broadcast message to wearable activity for display
-            Intent messageIntent = new Intent();
-            messageIntent.setAction(Intent.ACTION_SEND);
-            messageIntent.putExtra("message", message);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
-        }*/
     }
 
     @Override
@@ -181,28 +161,5 @@ public class MainActivity extends WearableActivity implements GoogleApiClient.Co
         mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
     }
 
-    class SendToDataLayerThread extends Thread {
-        String path;
-        String message;
 
-        // Constructor to send a message to the data layer
-        SendToDataLayerThread(String p, String msg) {
-            path = p;
-            message = msg;
-        }
-
-        public void run() {
-            NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(googleClient).await();
-            Log.v("wearThread", "inside SendData ");
-            for (Node node : nodes.getNodes()) {
-                MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(googleClient, node.getId(), path, message.getBytes()).await();
-                if (result.getStatus().isSuccess()) {
-                    Log.v("wearThread", "Message: {" + message + "} sent to: " + node.getDisplayName());
-                } else {
-                    // Log an error
-                    Log.v("wearThread", "ERROR: failed to send Message");
-                }
-            }
-        }
-    }
 }
