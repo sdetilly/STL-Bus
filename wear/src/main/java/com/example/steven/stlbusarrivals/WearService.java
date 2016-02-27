@@ -12,7 +12,7 @@ import com.google.android.gms.wearable.WearableListenerService;
  */
 public class WearService extends WearableListenerService {
 
-    @Override
+    /*@Override
     public void onMessageReceived(MessageEvent messageEvent) {
 
         if (messageEvent.getPath().equals("/details_send")) {
@@ -34,5 +34,5 @@ public class WearService extends WearableListenerService {
         }else{
             super.onMessageReceived(messageEvent);
         }
-    }
+    }*/
 }

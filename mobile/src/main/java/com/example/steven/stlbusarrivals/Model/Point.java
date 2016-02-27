@@ -1,6 +1,8 @@
 package com.example.steven.stlbusarrivals.Model;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.wearable.DataMap;
+
 import java.io.Serializable;
 
 /**
@@ -12,6 +14,13 @@ public class Point implements Serializable {
     double latitude;
 
     public Point(){}
+
+    public DataMap putData(){
+        DataMap map = new DataMap();
+        map.putDouble("longitude", longitude);
+        map.putDouble("latitude", latitude);
+        return map;
+    }
 
     public void setLongitude(double longitude){this.longitude = longitude;}
 

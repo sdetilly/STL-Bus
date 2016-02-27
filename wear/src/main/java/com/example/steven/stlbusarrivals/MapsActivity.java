@@ -9,6 +9,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEventBuffer;
 
 import android.Manifest;
 import android.app.Activity;
@@ -34,7 +36,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.StringReader;
 
 public class MapsActivity extends Activity implements OnMapReadyCallback,
-        GoogleMap.OnMapLongClickListener {
+        GoogleMap.OnMapLongClickListener, DataApi.DataListener {
 
     /**
      * Overlay that shows a short help text when first launched. It also provides an option to
@@ -95,6 +97,11 @@ public class MapsActivity extends Activity implements OnMapReadyCallback,
         IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
+
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
 
     }
 

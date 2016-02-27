@@ -20,15 +20,21 @@ import com.example.steven.stlbusarrivals.Model.TimeList;
 import com.example.steven.stlbusarrivals.Model.Vehicule;
 import com.example.steven.stlbusarrivals.Model.VehiculeList;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+
+import org.joda.time.DateTime;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,9 +60,6 @@ public class WearService extends WearableListenerService  implements Observer {
                 .addApi(Wearable.API)
                 .build();
         googleClient.connect();
-        IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
-        MessageReceiver messageReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
     }
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
@@ -135,13 +138,6 @@ public class WearService extends WearableListenerService  implements Observer {
         queue.add(request);
     }
 
-    public class MessageReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("message");
-        }
-    }
-
     public void getDataList(){
         detailsList = getAllOrderedDetails();
         for(int i=0; i<detailsList.size(); i++){
@@ -153,21 +149,30 @@ public class WearService extends WearableListenerService  implements Observer {
 
     class SendToDataLayerThread extends Thread {
         String path;
-        String message;
+        DataMap map;
 
         // Constructor to send a message to the data layer
-        SendToDataLayerThread(String p, String msg) {
+        SendToDataLayerThread(String p, DataMap map) {
             path = p;
-            message = msg;
+            this.map = map;
         }
 
         public void run() {
+            DateTime dateTime = new DateTime();
+            PutDataMapRequest dataMapReq = PutDataMapRequest.create(path);
+            DataMap dataMap = dataMapReq.getDataMap();
+
+            dataMap.putDataMap("map", map);
+            dataMap.putString("time",String.valueOf(dateTime.getMillisOfSecond()));
+
+            PutDataRequest request = dataMapReq.asPutDataRequest();
             NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(googleClient).await();
             for (Node node : nodes.getNodes()) {
-                MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(googleClient, node.getId(), path, message.getBytes()).await();
-                if (result.getStatus().isSuccess()) {
-                    Log.v("mobSendData", "Message: {" + message + "} sent to: " + node.getDisplayName());
-                } else {
+                DataApi.DataItemResult dataItemResult = Wearable.DataApi
+                        .putDataItem(googleClient, request).await();
+                if (dataItemResult.getStatus().isSuccess()) {
+                    Log.v("mobSendData", "Data sent to: " + node.getDisplayName());
+                }else {
                     // Log an error
                     Log.v("mobSendData", "ERROR: failed to send Message");
                 }
@@ -215,21 +220,27 @@ public class WearService extends WearableListenerService  implements Observer {
         if(o instanceof TimeList) {
             update++;
             if (update == detailsList.size()) {
+                DataMap detailMap = new DataMap();
                 for (int i = 0; i < detailsList.size(); i++) {
-                    new SendToDataLayerThread("/details_send", detailsList.get(i).sendToWearable()).start();
+                    detailMap.putDataMap("detail"+i,detailsList.get(i).putData());
                 }
                 update = 0;
+                new SendToDataLayerThread("/details_send", detailMap).start();
             }
         }
         if(o instanceof VehiculeList){
             VehiculeList vehiculeList = (VehiculeList) o;
             if(vehiculeList.size() > 0) {
-                new SendToDataLayerThread("/maps_send", vehiculeList.get(0).sendToWearable()).start();
+                DataMap vehiculeMap = new DataMap();
+                vehiculeMap.putDataMap("vehicule", vehiculeList.get(0).putData());
+                new SendToDataLayerThread("/maps_send", vehiculeMap).start();
             }
         }
         if(o instanceof PathBounds){
             PathBounds pathBounds = (PathBounds) o;
-            new SendToDataLayerThread("/maps_send", pathBounds.sendToWearable()).start();
+            DataMap pathMap = new DataMap();
+            pathMap.putDataMap("pathBounds",pathBounds.putData());
+            new SendToDataLayerThread("/maps_send", pathMap).start();
         }
         /*if(o instanceof PathList){
             PathList pathList = (PathList) o;

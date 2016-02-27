@@ -9,6 +9,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.steven.stlbusarrivals.VolleySingleton;
 import com.example.steven.stlbusarrivals.XmlParser;
+import com.google.android.gms.wearable.DataMap;
 import com.j256.ormlite.field.DatabaseField;
 
 import java.util.Observable;
@@ -39,6 +40,15 @@ public class Details extends Observable implements Observer{
     public Details(){}
 
     public Details(Context context){this.context = context;}
+
+    public DataMap putData(){
+        DataMap map = new DataMap();
+        map.putString("routeTag", routeTag);
+        map.putString("stopId", stopId);
+        map.putString("routeName", routeName);
+        map.putString("stopName", stopName);
+        return map;
+    }
 
     public int getId(){return id;}
 

@@ -2,6 +2,7 @@ package com.example.steven.stlbusarrivals.Model;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.wearable.DataMap;
 
 /**
  * Created by Steven on 2016-02-04.
@@ -11,6 +12,15 @@ public class PathBounds {
     double latMin, latMax, longMin, longMax;
 
     public PathBounds(){}
+
+    public DataMap putData(){
+        DataMap map = new DataMap();
+        map.putDouble("latMin", latMin);
+        map.putDouble("latMax", latMax);
+        map.putDouble("longMin", longMin);
+        map.putDouble("longMax", longMax);
+        return map;
+    }
 
     public LatLng getMinBounds(){
         return new LatLng(latMin, longMin);

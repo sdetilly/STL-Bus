@@ -13,8 +13,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
@@ -24,7 +33,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends WearableActivity {
+public class MainActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, DataApi.DataListener, MessageApi.MessageListener{
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);
@@ -70,12 +80,11 @@ public class MainActivity extends WearableActivity {
 
         googleClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .build();
         googleClient.connect();
-        new SendToDataLayerThread("/details_req", "message").start();
-        IntentFilter messageFilter = new IntentFilter(Intent.ACTION_SEND);
-        MessageReceiver messageReceiver = new MessageReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, messageFilter);
+
     }
 
     @Override
@@ -85,10 +94,51 @@ public class MainActivity extends WearableActivity {
         mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
     }
 
-    public class MessageReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("message");
+    @Override
+    public void onConnected(Bundle bundle) {
+        Wearable.DataApi.addListener(googleClient, this);
+        Wearable.MessageApi.addListener(googleClient,this);
+        new SendToDataLayerThread("/details_req", "message").start();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents) {
+
+        Log.v("onDataChanged", "entered successfully" );
+        for (DataEvent event : dataEvents)
+        {
+            Log.v("onDataChanged", "entered for with " + event.getType() );
+
+            DataItem item = event.getDataItem();
+            DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+            if(!dataMap.get("map").equals("")) {
+                DataMap mMap = dataMap.getDataMap("map");
+                for (int i = 0; i < mMap.size(); i++){
+                    Details details = new Details();
+                    details.setData(mMap.getDataMap("detail"+i));
+                    detailsList.add(details);
+                }
+                listView.setAdapter(new DetailsAdapter(getBaseContext(), R.layout.row_favorites, detailsList));
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+
+        /*if (messageEvent.getPath().equals("/details_send")) {
+            final String message = new String(messageEvent.getData());
+
             String[] separated = message.split("[+]");
             if(separated[0].equals("details")) {
                 Log.v("wearMainAct", "Main activity received message: " + message);
@@ -97,7 +147,15 @@ public class MainActivity extends WearableActivity {
                 listView.setAdapter(new DetailsAdapter(getBaseContext(), R.layout.row_favorites, detailsList));
                 // Display message in UI
             }
-        }
+        }else if (messageEvent.getPath().equals("/maps_send")){
+            final String message = new String(messageEvent.getData());
+
+            // Broadcast message to wearable activity for display
+            Intent messageIntent = new Intent();
+            messageIntent.setAction(Intent.ACTION_SEND);
+            messageIntent.putExtra("message", message);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(messageIntent);
+        }*/
     }
 
     @Override
@@ -119,8 +177,8 @@ public class MainActivity extends WearableActivity {
     }
 
     private void updateDisplay() {
-            mClockView.setVisibility(View.VISIBLE);
-            mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
+        mClockView.setVisibility(View.VISIBLE);
+        mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
     }
 
     class SendToDataLayerThread extends Thread {
