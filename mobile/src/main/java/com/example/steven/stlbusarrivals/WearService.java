@@ -84,7 +84,7 @@ public class WearService extends WearableListenerService  implements Observer {
     }
 
     private void sendDetailRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(getBaseContext()).getRequestQueue();
+        RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
 
@@ -142,7 +142,7 @@ public class WearService extends WearableListenerService  implements Observer {
         detailsList = getAllOrderedDetails();
         for(int i=0; i<detailsList.size(); i++){
             detailsList.get(i).addObserver(this);
-            detailsList.get(i).getNetPrediction();
+            detailsList.get(i).getNetPrediction(this);
         }
     }
 

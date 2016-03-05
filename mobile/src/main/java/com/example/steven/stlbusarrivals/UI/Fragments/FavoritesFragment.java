@@ -145,7 +145,7 @@ public class FavoritesFragment extends Fragment implements Observer{
             for (int i = 0; i < detailsList.size(); i++) {
                 Log.d("favoritefrag", "adding observers...");
                 detailsList.get(i).addObserver(this);
-                detailsList.get(i).getNetPrediction();
+                detailsList.get(i).getNetPrediction(getActivity());
             }
         }
         detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);

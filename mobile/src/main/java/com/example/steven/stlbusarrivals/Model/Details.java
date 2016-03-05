@@ -82,9 +82,9 @@ public class Details extends Observable implements Observer{
         return "details+" + routeName + "+" + stopName + "+" + prediction + "+" + routeTag;
     }
 
-    public void getNetPrediction(){
+    public void getNetPrediction(final Context ctx){
         xmlparser.addObserver(this);
-        RequestQueue queue = VolleySingleton.getInstance(context).getRequestQueue();
+        RequestQueue queue = VolleySingleton.getInstance(ctx).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=stl&stopId=" + stopId + "&routeTag=" + routeTag;
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
 
@@ -105,7 +105,7 @@ public class Details extends Observable implements Observer{
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                getNetPrediction();
+                getNetPrediction(ctx);
             }
         });
         queue.add(request);

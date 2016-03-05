@@ -41,6 +41,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends Activity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleMap.OnMapLongClickListener, DataApi.DataListener {
@@ -163,19 +165,34 @@ public class MapsActivity extends Activity implements OnMapReadyCallback, Google
                 DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
 
                 if (!dataMap.get("map").equals("")) {
-                    DataMap mDataMap = dataMap.getDataMap("map");
-                    pathList.setData(mDataMap.getDataMap("pathList"));
+                    final DataMap mDataMap = dataMap.getDataMap("map");
 
+                    new AsyncTask<Void, Void, ArrayList<PolylineOptions>>(){
 
-                    for (int j = pathList.size() - 1; j >= 0; j--) {
-                        for (int i = pathList.get(j).size() - 1; i > 0; i--) {
+                        @Override
+                        protected ArrayList<PolylineOptions> doInBackground(Void... params) {
 
-                            mMap.addPolyline(new PolylineOptions()
-                                    .add(pathList.get(j).get(i).getLatLng(), pathList.get(j).get(i - 1).getLatLng())
-                                    .width(3)
-                                    .color(Color.BLUE));
+                            pathList.setData(mDataMap.getDataMap("pathList"));
+                            ArrayList polyList = new ArrayList<PolylineOptions>();
+
+                            for (int j = pathList.size() - 1; j >= 0; j--) {
+                                for (int i = pathList.get(j).size() - 1; i > 0; i--) {
+                                    PolylineOptions poly = new PolylineOptions();
+                                    poly.add(pathList.get(j).get(i).getLatLng(), pathList.get(j).get(i - 1).getLatLng()).width(3).color(Color.BLUE);
+                                    polyList.add(poly);
+                                }
+                            }
+                            return polyList;
                         }
-                    }
+
+                        @Override
+                        protected void onPostExecute(ArrayList<PolylineOptions> polyList){
+                            for(int i = 0; i<polyList.size(); i++) {
+                                mMap.addPolyline(polyList.get(i));
+                            }
+                        }
+                    }.execute();
+
                 }
             }
         }
