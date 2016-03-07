@@ -78,10 +78,14 @@ public class WearService extends WearableListenerService  implements Observer {
             // Broadcast message to wearable activity for display
             //sendDetailRequest();
             String url1 = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
-            new RequestSender(this,Constants.LOCATION_XML,url1).sendRequest();
+            RequestSender locationRequest = new RequestSender(this,Constants.LOCATION_XML,url1);
+            locationRequest.addObserver(this);
+            locationRequest.sendRequest();
             //sendPathRequest();
             String url2 = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
-            new RequestSender(this,Constants.STOP_XML,url2).sendRequest();
+            RequestSender stopRequest =new RequestSender(this,Constants.STOP_XML,url2);
+            stopRequest.addObserver(this);
+            stopRequest.sendRequest();
         }else {
             super.onMessageReceived(messageEvent);
         }
