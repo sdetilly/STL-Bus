@@ -23,16 +23,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("onCreate", "OK");
 
         vpPager = (ViewPager) findViewById(R.id.pager_main);
         adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
-        if (savedInstanceState != null) {
-            vpPager.setCurrentItem(savedInstanceState.getInt("currentItem"));
-            Log.d("MainAct loading...", ""+ savedInstanceState.getInt("currentItem"));
-        }
         vpPager.setAdapter(adapterViewPager);
-
         vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
@@ -48,13 +42,6 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int arg0) {
             }
         });
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("currenItem", vpagerItem);
-        Log.d("MainAct saving...", "" + vpagerItem);
     }
 
 
@@ -103,16 +90,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

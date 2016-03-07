@@ -14,11 +14,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.steven.stlbusarrivals.Constants;
 import com.example.steven.stlbusarrivals.Model.PathList;
 import com.example.steven.stlbusarrivals.Model.Route;
 import com.example.steven.stlbusarrivals.Model.Stop;
 import com.example.steven.stlbusarrivals.Model.StopList;
 import com.example.steven.stlbusarrivals.R;
+import com.example.steven.stlbusarrivals.RequestSender;
 import com.example.steven.stlbusarrivals.UI.Adapter.StopSearchAdapter;
 import com.example.steven.stlbusarrivals.VolleySingleton;
 import com.example.steven.stlbusarrivals.XmlParser;
@@ -33,7 +35,6 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
 
     private ListView listView;
     private static StopList stopList;
-    private XmlParser xmlparser = new XmlParser();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,10 +50,14 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
             routeName = savedInstanceState.getString("routeName");
         }
         setTitle(routeName);
-        sendRequest();
+        //sendRequest();
+        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag + "&terse";
+        RequestSender request = new RequestSender(this,Constants.STOP_XML, url);
+        request.addObserver(this);
+        request.sendRequest();
     }
 
-    private void sendRequest(){
+    /*private void sendRequest(){
         RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
         xmlparser.addObserver(this);
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag + "&terse";
@@ -63,7 +68,8 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser.readStopXml(response);
+                    //xmlparser.readStopXml(response);
+                    xmlparser.readXml(Constants.STOP_XML, response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -78,7 +84,7 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
             }
         });
         queue.add(request);
-    }
+    }*/
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -113,7 +119,7 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
         Log.d("stopfrag update", "entered");
         if(o instanceof StopList){
             stopList = (StopList) o;
+            refreshList();
         }
-        refreshList();
     }
 }

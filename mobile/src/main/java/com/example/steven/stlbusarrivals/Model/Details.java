@@ -7,6 +7,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.steven.stlbusarrivals.Constants;
+import com.example.steven.stlbusarrivals.RequestSender;
 import com.example.steven.stlbusarrivals.VolleySingleton;
 import com.example.steven.stlbusarrivals.XmlParser;
 import com.google.android.gms.wearable.DataMap;
@@ -20,7 +22,6 @@ import java.util.Observer;
  */
 public class Details extends Observable implements Observer{
 
-    private XmlParser xmlparser = new XmlParser();
     private Context context;
     String prediction;
     private TimeList timeList;
@@ -75,16 +76,12 @@ public class Details extends Observable implements Observer{
 
     public String getPrediction(){return prediction;}
 
-    public void setPredictionNull(){prediction = null;}
-
-    public String sendToWearable(){
-        String[] separated = stopName.split(" ",2);
-        return "details+" + routeName + "+" + stopName + "+" + prediction + "+" + routeTag;
-    }
-
     public void getNetPrediction(final Context ctx){
-        xmlparser.addObserver(this);
-        RequestQueue queue = VolleySingleton.getInstance(ctx).getRequestQueue();
+        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=stl&stopId=" + stopId + "&routeTag=" + routeTag;
+        RequestSender request = new RequestSender(ctx,Constants.PREDICTION_XML, url);
+        request.addObserver(this);
+        request.sendRequest();
+        /*RequestQueue queue = VolleySingleton.getInstance(ctx).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=stl&stopId=" + stopId + "&routeTag=" + routeTag;
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
 
@@ -93,7 +90,8 @@ public class Details extends Observable implements Observer{
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser.readPrediction(response);
+                    //xmlparser.readPrediction(response);
+                    xmlparser.readXml(Constants.PREDICTION_XML, response);
                     Log.d("unitDetails", "This detail is parsing...");
                 }catch(Exception e){
                     e.printStackTrace();
@@ -108,7 +106,7 @@ public class Details extends Observable implements Observer{
                 getNetPrediction(ctx);
             }
         });
-        queue.add(request);
+        queue.add(request);*/
     }
 
     @Override

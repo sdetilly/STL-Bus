@@ -17,11 +17,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.steven.stlbusarrivals.Constants;
 import com.example.steven.stlbusarrivals.Model.PathBounds;
 import com.example.steven.stlbusarrivals.Model.PathList;
 import com.example.steven.stlbusarrivals.Model.Point;
 import com.example.steven.stlbusarrivals.Model.VehiculeList;
 import com.example.steven.stlbusarrivals.R;
+import com.example.steven.stlbusarrivals.RequestSender;
 import com.example.steven.stlbusarrivals.VolleySingleton;
 import com.example.steven.stlbusarrivals.XmlParser;
 import com.google.android.gms.maps.CameraUpdate;
@@ -74,7 +76,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
     @Override
     public void onResume(){
         super.onResume();
-        sendPathRequest();
+        //sendPathRequest();
+        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
+        RequestSender stopRequest = new RequestSender(getActivity(),Constants.STOP_XML, url);
+        stopRequest.addObserver(this);
+        stopRequest.sendRequest();
     }
 
     private void sendPathRequest(){
@@ -88,7 +94,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser.readStopXml(response);
+                    //xmlparser.readStopXml(response);
+                    xmlparser.readXml(Constants.STOP_XML, response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -115,7 +122,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser.readLocation(response);
+                    //xmlparser.readLocation(response);
+                    xmlparser.readXml(Constants.LOCATION_XML, response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -163,7 +171,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
         }
         if(o instanceof PathList){
             pathList = (ArrayList<ArrayList<Point>>) o;
-            sendDetailRequest();
+            //sendDetailRequest();
+            String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
+            RequestSender locationRequest = new RequestSender(getActivity(),Constants.LOCATION_XML, url);
+            locationRequest.addObserver(this);
+            locationRequest.sendRequest();
         }
         if(o instanceof PathBounds){
             pathBounds = (PathBounds) o;

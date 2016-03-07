@@ -18,10 +18,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.steven.stlbusarrivals.Constants;
 import com.example.steven.stlbusarrivals.Dao.DatabaseHelper;
 import com.example.steven.stlbusarrivals.Model.Details;
 import com.example.steven.stlbusarrivals.Model.TimeList;
 import com.example.steven.stlbusarrivals.R;
+import com.example.steven.stlbusarrivals.RequestSender;
 import com.example.steven.stlbusarrivals.VolleySingleton;
 import com.example.steven.stlbusarrivals.XmlParser;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -67,10 +69,14 @@ public class DetailsFragment extends Fragment implements Observer{
     @Override
     public void onResume(){
         super.onResume();
-        sendRequest();
+        //sendRequest();
+        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=stl&stopId=" + stopId + "&routeTag=" + routeTag;
+        RequestSender request = new RequestSender(getActivity(),Constants.PREDICTION_XML, url);
+        request.addObserver(this);
+        request.sendRequest();
 
     }
-    private void sendRequest(){
+    /*private void sendRequest(){
         RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=stl&stopId=" + stopId + "&routeTag=" + routeTag;
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
@@ -80,7 +86,8 @@ public class DetailsFragment extends Fragment implements Observer{
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser.readPrediction(response);
+                    //xmlparser.readPrediction(response);
+                    xmlparser.readXml(Constants.PREDICTION_XML, response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -95,7 +102,7 @@ public class DetailsFragment extends Fragment implements Observer{
             }
         });
         queue.add(request);
-    }
+    }*/
 
     private ArrayList<Details> getAllOrderedDetails() {
         // Construct the data source

@@ -76,8 +76,12 @@ public class WearService extends WearableListenerService  implements Observer {
             Log.v("mobListenerService", "RouteTag received on phone is: " + routeTag);
 
             // Broadcast message to wearable activity for display
-            sendDetailRequest();
-            sendPathRequest();
+            //sendDetailRequest();
+            String url1 = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
+            new RequestSender(this,Constants.LOCATION_XML,url1).sendRequest();
+            //sendPathRequest();
+            String url2 = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
+            new RequestSender(this,Constants.STOP_XML,url2).sendRequest();
         }else {
             super.onMessageReceived(messageEvent);
         }
@@ -93,7 +97,8 @@ public class WearService extends WearableListenerService  implements Observer {
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser.readLocation(response);
+                    //xmlparser.readLocation(response);
+                    xmlparser.readXml(Constants.LOCATION_XML, response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -121,7 +126,8 @@ public class WearService extends WearableListenerService  implements Observer {
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser.readStopXml(response);
+                    //xmlparser.readStopXml(response);
+                    xmlparser.readXml(Constants.STOP_XML, response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }

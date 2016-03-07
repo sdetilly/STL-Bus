@@ -13,9 +13,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.steven.stlbusarrivals.Constants;
 import com.example.steven.stlbusarrivals.Model.Route;
 import com.example.steven.stlbusarrivals.Model.RouteList;
 import com.example.steven.stlbusarrivals.R;
+import com.example.steven.stlbusarrivals.RequestSender;
 import com.example.steven.stlbusarrivals.UI.Activity.StopSearchActivity;
 import com.example.steven.stlbusarrivals.UI.Adapter.RouteSearchAdapter;
 import com.example.steven.stlbusarrivals.VolleySingleton;
@@ -30,6 +32,7 @@ public class RouteSearchFragment extends Fragment implements Observer {
     private static RouteList routeList;
     private RouteSearchAdapter routeSearchAdapter;
     private XmlParser xmlparser = new XmlParser();
+    private RequestSender routeRequest;
 
     public RouteSearchFragment() {
         // Required empty public constructor
@@ -38,8 +41,12 @@ public class RouteSearchFragment extends Fragment implements Observer {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        xmlparser.addObserver(this);
-        sendRequest();
+        //xmlparser.addObserver(this);
+        //sendRequest();
+        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=stl";
+        routeRequest = new RequestSender(getActivity(),Constants.ROUTE_XML, url);
+        routeRequest.addObserver(this);
+        routeRequest.sendRequest();
     }
 
     private void sendRequest(){
@@ -52,7 +59,8 @@ public class RouteSearchFragment extends Fragment implements Observer {
                 // we got the response, now our job is to handle it
                 //parseXmlResponse(response);
                 try{
-                    xmlparser.readRouteXml(response);
+                    //xmlparser.readRouteXml(response);
+                    xmlparser.readXml(Constants.ROUTE_XML, response);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
