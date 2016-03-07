@@ -1,12 +1,8 @@
 package com.example.steven.stlbusarrivals.UI.Fragments;
 
-import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,24 +10,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.example.steven.stlbusarrivals.Constants;
-import com.example.steven.stlbusarrivals.Dao.DatabaseHelper;
+import com.example.steven.stlbusarrivals.DAO.DatabaseHelper;
 import com.example.steven.stlbusarrivals.Model.Details;
 import com.example.steven.stlbusarrivals.Model.TimeList;
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.RequestSender;
-import com.example.steven.stlbusarrivals.VolleySingleton;
-import com.example.steven.stlbusarrivals.XmlParser;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Observable;
@@ -73,22 +59,6 @@ public class DetailsFragment extends Fragment implements Observer{
 
     }
 
-    private ArrayList<Details> getAllOrderedDetails() {
-        // Construct the data source
-        // get our query builder from the DAO
-        QueryBuilder<Details, Integer> queryBuilder = getHelper().getDetailsDao().queryBuilder();
-        // the 'password' field must be equal to "qwerty"
-        // prepare our sql statement
-        PreparedQuery<Details> preparedQuery = null;
-        try {
-            preparedQuery = queryBuilder.prepare();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return (ArrayList) getHelper().getDetailsDao().query(preparedQuery);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -101,7 +71,7 @@ public class DetailsFragment extends Fragment implements Observer{
         tv_routeName.setText(routeName);
         tv_stopName.setText(stopName);
 
-        detailsList = getAllOrderedDetails();
+        detailsList = getHelper().getAllOrderedDetails();
 
         final FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

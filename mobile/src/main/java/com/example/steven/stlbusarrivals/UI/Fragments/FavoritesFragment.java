@@ -11,35 +11,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.example.steven.stlbusarrivals.Dao.DatabaseHelper;
+import com.example.steven.stlbusarrivals.DAO.DatabaseHelper;
 import com.example.steven.stlbusarrivals.Model.Details;
-import com.example.steven.stlbusarrivals.Model.Point;
-import com.example.steven.stlbusarrivals.Model.Stop;
-import com.example.steven.stlbusarrivals.Model.TimeList;
 import com.example.steven.stlbusarrivals.R;
-import com.example.steven.stlbusarrivals.UI.Activity.MainActivity;
 import com.example.steven.stlbusarrivals.UI.Activity.StopDetailsActivity;
 import com.example.steven.stlbusarrivals.UI.Adapter.DetailsAdapter;
-import com.example.steven.stlbusarrivals.VolleySingleton;
-import com.example.steven.stlbusarrivals.XmlParser;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 public class FavoritesFragment extends Fragment implements Observer{
 
-    RequestQueue queue;
     private DatabaseHelper databaseHelper = null;
     ListView listView;
     DetailsAdapter detailsAdapter;
@@ -53,7 +38,6 @@ public class FavoritesFragment extends Fragment implements Observer{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
     }
 
     @Override
@@ -107,22 +91,6 @@ public class FavoritesFragment extends Fragment implements Observer{
         return v;
     }
 
-
-    private ArrayList<Details> getAllOrderedDetails() {
-        // Construct the data source
-        // get our query builder from the DAO
-        QueryBuilder<Details, Integer> queryBuilder = getHelper().getDetailsDao().queryBuilder();
-        // the 'password' field must be equal to "qwerty"
-        // prepare our sql statement
-        PreparedQuery<Details> preparedQuery = null;
-        try {
-            preparedQuery = queryBuilder.prepare();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return (ArrayList) getHelper().getDetailsDao().query(preparedQuery);
-    }
     private DatabaseHelper getHelper(){
         if(databaseHelper == null){
             databaseHelper = OpenHelperManager.getHelper(getActivity(), DatabaseHelper.class);
@@ -140,7 +108,7 @@ public class FavoritesFragment extends Fragment implements Observer{
     @Override
     public void onResume(){
         super.onResume();
-        detailsList = getAllOrderedDetails();
+        detailsList = getHelper().getAllOrderedDetails();
         getDetailPrediction();
         detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);
 
@@ -158,7 +126,7 @@ public class FavoritesFragment extends Fragment implements Observer{
 
     private void deleteDetails(){
         getHelper().getDetailsDao().deleteById(this.lastClickedDetailsId);
-        detailsList = getAllOrderedDetails();
+        detailsList = getHelper().getAllOrderedDetails();
         detailsAdapter = null;
         getDetailPrediction();
         detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);

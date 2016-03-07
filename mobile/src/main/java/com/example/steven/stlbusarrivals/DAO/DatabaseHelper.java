@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.Dao;
+package com.example.steven.stlbusarrivals.DAO;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,9 +8,12 @@ import com.example.steven.stlbusarrivals.Model.Details;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Created by Steven on 2016-01-29.
@@ -70,6 +73,22 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super.close();
         detailsDao = null;
         detailsRuntimeDao = null;
+    }
+
+    public ArrayList<Details> getAllOrderedDetails() {
+        // Construct the data source
+        // get our query builder from the DAO
+        QueryBuilder<Details, Integer> queryBuilder = getDetailsDao().queryBuilder();
+        // the 'password' field must be equal to "qwerty"
+        // prepare our sql statement
+        PreparedQuery<Details> preparedQuery = null;
+        try {
+            preparedQuery = queryBuilder.prepare();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return (ArrayList) getDetailsDao().query(preparedQuery);
     }
 
 }

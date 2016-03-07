@@ -1,28 +1,16 @@
 package com.example.steven.stlbusarrivals;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.example.steven.stlbusarrivals.Dao.DatabaseHelper;
+import com.example.steven.stlbusarrivals.DAO.DatabaseHelper;
 import com.example.steven.stlbusarrivals.Model.Details;
-import com.example.steven.stlbusarrivals.Model.DetailsList;
 import com.example.steven.stlbusarrivals.Model.PathBounds;
 import com.example.steven.stlbusarrivals.Model.PathList;
 import com.example.steven.stlbusarrivals.Model.TimeList;
-import com.example.steven.stlbusarrivals.Model.Vehicule;
 import com.example.steven.stlbusarrivals.Model.VehiculeList;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
@@ -31,12 +19,9 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 
 import org.joda.time.DateTime;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -89,7 +74,7 @@ public class WearService extends WearableListenerService  implements Observer {
     }
 
     public void getDataList(){
-        detailsList = getAllOrderedDetails();
+        detailsList = getHelper().getAllOrderedDetails();
         for(int i=0; i<detailsList.size(); i++){
             detailsList.get(i).addObserver(this);
             detailsList.get(i).getNetPrediction(this);
@@ -134,22 +119,6 @@ public class WearService extends WearableListenerService  implements Observer {
             databaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
         }
         return databaseHelper;
-    }
-
-    private ArrayList<Details> getAllOrderedDetails() {
-        // Construct the data source
-        // get our query builder from the DAO
-        QueryBuilder<Details, Integer> queryBuilder = getHelper().getDetailsDao().queryBuilder();
-        // the 'password' field must be equal to "qwerty"
-        // prepare our sql statement
-        PreparedQuery<Details> preparedQuery = null;
-        try {
-            preparedQuery = queryBuilder.prepare();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return (ArrayList) getHelper().getDetailsDao().query(preparedQuery);
     }
 
     @Override
