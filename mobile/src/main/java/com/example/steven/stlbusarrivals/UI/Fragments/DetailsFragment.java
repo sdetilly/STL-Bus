@@ -43,8 +43,6 @@ import java.util.Observer;
 public class DetailsFragment extends Fragment implements Observer{
 
     private DatabaseHelper databaseHelper = null;
-    private static TimeList timeList;
-    private XmlParser xmlparser = new XmlParser();
     private String stopId, routeTag, stopName, routeName;
     TextView tv_routeName, tv_stopName, firstPrediction, secondPrediction;
     ArrayList<Details> detailsList;
@@ -59,7 +57,6 @@ public class DetailsFragment extends Fragment implements Observer{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        xmlparser.addObserver(this);
         stopId = getArguments().getString("stopId");
         stopName = getArguments().getString("stopName");
         routeTag = getArguments().getString("routeTag");
@@ -69,40 +66,12 @@ public class DetailsFragment extends Fragment implements Observer{
     @Override
     public void onResume(){
         super.onResume();
-        //sendRequest();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=stl&stopId=" + stopId + "&routeTag=" + routeTag;
         RequestSender request = new RequestSender(getActivity(),Constants.PREDICTION_XML, url);
         request.addObserver(this);
         request.sendRequest();
 
     }
-    /*private void sendRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
-        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a=stl&stopId=" + stopId + "&routeTag=" + routeTag;
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                // we got the response, now our job is to handle it
-                //parseXmlResponse(response);
-                try{
-                    //xmlparser.readPrediction(response);
-                    xmlparser.readXml(Constants.PREDICTION_XML, response);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                sendRequest();
-            }
-        });
-        queue.add(request);
-    }*/
 
     private ArrayList<Details> getAllOrderedDetails() {
         // Construct the data source
@@ -160,7 +129,7 @@ public class DetailsFragment extends Fragment implements Observer{
      public void update(Observable observable, Object o) {
         Log.d("detailsfrag update", "entered");
         if(o instanceof TimeList){
-            timeList = (TimeList) o;
+            TimeList timeList = (TimeList) o;
             Calendar c = Calendar.getInstance();
             int currentHour = c.get(Calendar.HOUR_OF_DAY);
             int currentMinutes = c.get(Calendar.MINUTE);

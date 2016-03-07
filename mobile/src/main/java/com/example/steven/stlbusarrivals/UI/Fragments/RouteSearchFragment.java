@@ -30,9 +30,6 @@ public class RouteSearchFragment extends Fragment implements Observer {
 
     private ListView listView;
     private static RouteList routeList;
-    private RouteSearchAdapter routeSearchAdapter;
-    private XmlParser xmlparser = new XmlParser();
-    private RequestSender routeRequest;
 
     public RouteSearchFragment() {
         // Required empty public constructor
@@ -41,40 +38,10 @@ public class RouteSearchFragment extends Fragment implements Observer {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //xmlparser.addObserver(this);
-        //sendRequest();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=stl";
-        routeRequest = new RequestSender(getActivity(),Constants.ROUTE_XML, url);
+        RequestSender routeRequest = new RequestSender(getActivity(),Constants.ROUTE_XML, url);
         routeRequest.addObserver(this);
         routeRequest.sendRequest();
-    }
-
-    private void sendRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
-        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=stl";
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                // we got the response, now our job is to handle it
-                //parseXmlResponse(response);
-                try{
-                    //xmlparser.readRouteXml(response);
-                    xmlparser.readXml(Constants.ROUTE_XML, response);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                sendRequest();
-            }
-        });
-        queue.add(request);
     }
 
     @Override
@@ -87,7 +54,7 @@ public class RouteSearchFragment extends Fragment implements Observer {
     }
 
     public void refreshList(){
-        routeSearchAdapter = new RouteSearchAdapter(getActivity(), R.layout.row_route_search_list, routeList);
+        RouteSearchAdapter routeSearchAdapter = new RouteSearchAdapter(getActivity(), R.layout.row_route_search_list, routeList);
         listView.setAdapter(routeSearchAdapter);
         routeSearchAdapter.notifyDataSetChanged();
 
@@ -107,10 +74,11 @@ public class RouteSearchFragment extends Fragment implements Observer {
     }
     @Override
     public void update(Observable observable, Object o) {
-        Log.d("searchfrag update","entered");
+        Log.d("searchfrag update", "entered");
         if(o instanceof RouteList){
             routeList = (RouteList) o;
+            refreshList();
         }
-        refreshList();
+
     }
 }

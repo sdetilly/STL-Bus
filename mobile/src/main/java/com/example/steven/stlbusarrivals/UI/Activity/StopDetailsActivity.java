@@ -58,7 +58,7 @@ public class StopDetailsActivity extends AppCompatActivity{
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0: // Fragment # 0 - This will show FavoritesFragment
+                case 0: // Fragment # 0 - This will show DetailsFragment
                     DetailsFragment detailsFragment = new DetailsFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString("stopId", stopId);
@@ -67,7 +67,7 @@ public class StopDetailsActivity extends AppCompatActivity{
                     bundle.putString("routeName", routeName);
                     detailsFragment.setArguments(bundle);
                     return detailsFragment;
-                case 1: // Fragment # 1 - This will show RouteSearchFragment
+                case 1: // Fragment # 1 - This will show MapsFragment
                     MapsFragment mapsFragment = new MapsFragment();
                     Bundle bundleMaps = new Bundle();
                     bundleMaps.putString("routeTag", routeTag);

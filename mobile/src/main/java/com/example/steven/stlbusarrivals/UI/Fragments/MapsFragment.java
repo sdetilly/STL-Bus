@@ -49,16 +49,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
 
     private GoogleMap mMap;
     private ArrayList<ArrayList<Point>> pathList;
-    private static VehiculeList vehiculeList;
-    private XmlParser xmlparser = new XmlParser();
-    private String longitude, latitude, routeTag;
+    private String routeTag;
     private PathBounds pathBounds;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        xmlparser.addObserver(this);
         routeTag = getArguments().getString("routeTag");
 
     }
@@ -76,80 +73,22 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
     @Override
     public void onResume(){
         super.onResume();
-        //sendPathRequest();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
         RequestSender stopRequest = new RequestSender(getActivity(),Constants.STOP_XML, url);
         stopRequest.addObserver(this);
         stopRequest.sendRequest();
     }
 
-    private void sendPathRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
-        xmlparser.addObserver(this);
-        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                // we got the response, now our job is to handle it
-                //parseXmlResponse(response);
-                try{
-                    //xmlparser.readStopXml(response);
-                    xmlparser.readXml(Constants.STOP_XML, response);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                sendPathRequest();
-            }
-        });
-        queue.add(request);
-    }
-
-    private void sendDetailRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
-        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                // we got the response, now our job is to handle it
-                //parseXmlResponse(response);
-                try{
-                    //xmlparser.readLocation(response);
-                    xmlparser.readXml(Constants.LOCATION_XML, response);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                sendDetailRequest();
-            }
-        });
-        queue.add(request);
-    }
-
     @Override
     public void update(Observable observable, Object o) {
         if(o instanceof VehiculeList) {
-            vehiculeList = (VehiculeList) o;
+            VehiculeList vehiculeList = (VehiculeList) o;
             LatLngBounds bounds = new LatLngBounds(
                     pathBounds.getMinBounds(), pathBounds.getMaxBounds());
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
             if (vehiculeList.size() != 0) {
-                longitude = vehiculeList.get(0).getLongitude();
-                latitude = vehiculeList.get(0).getLatitude();
+                String longitude = vehiculeList.get(0).getLongitude();
+                String latitude = vehiculeList.get(0).getLatitude();
                 if(!longitude.equals("false")){
                 mMap.clear();
                 LatLng bus = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
@@ -171,7 +110,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
         }
         if(o instanceof PathList){
             pathList = (ArrayList<ArrayList<Point>>) o;
-            //sendDetailRequest();
             String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
             RequestSender locationRequest = new RequestSender(getActivity(),Constants.LOCATION_XML, url);
             locationRequest.addObserver(this);

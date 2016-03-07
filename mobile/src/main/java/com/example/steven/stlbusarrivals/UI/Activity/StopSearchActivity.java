@@ -31,8 +31,8 @@ import java.util.Observer;
  * Created by Steven on 2016-01-28.
  */
 public class StopSearchActivity extends AppCompatActivity implements Observer {
-    private static String routeTag, routeName;
 
+    private static String routeTag, routeName;
     private ListView listView;
     private static StopList stopList;
 
@@ -50,41 +50,11 @@ public class StopSearchActivity extends AppCompatActivity implements Observer {
             routeName = savedInstanceState.getString("routeName");
         }
         setTitle(routeName);
-        //sendRequest();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag + "&terse";
         RequestSender request = new RequestSender(this,Constants.STOP_XML, url);
         request.addObserver(this);
         request.sendRequest();
     }
-
-    /*private void sendRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
-        xmlparser.addObserver(this);
-        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag + "&terse";
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                // we got the response, now our job is to handle it
-                //parseXmlResponse(response);
-                try{
-                    //xmlparser.readStopXml(response);
-                    xmlparser.readXml(Constants.STOP_XML, response);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                sendRequest();
-            }
-        });
-        queue.add(request);
-    }*/
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {

@@ -47,7 +47,6 @@ import java.util.Observer;
 public class WearService extends WearableListenerService  implements Observer {
 
     GoogleApiClient googleClient;
-    XmlParser xmlparser = new XmlParser();
     ArrayList<Details> detailsList;
     DatabaseHelper databaseHelper = null;
     static String routeTag;
@@ -74,14 +73,12 @@ public class WearService extends WearableListenerService  implements Observer {
             routeTag = new String(messageEvent.getData());
 
             Log.v("mobListenerService", "RouteTag received on phone is: " + routeTag);
-
-            // Broadcast message to wearable activity for display
-            //sendDetailRequest();
+            //Send the location request
             String url1 = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
             RequestSender locationRequest = new RequestSender(this,Constants.LOCATION_XML,url1);
             locationRequest.addObserver(this);
             locationRequest.sendRequest();
-            //sendPathRequest();
+            //send the stop request
             String url2 = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
             RequestSender stopRequest =new RequestSender(this,Constants.STOP_XML,url2);
             stopRequest.addObserver(this);
@@ -91,63 +88,6 @@ public class WearService extends WearableListenerService  implements Observer {
         }
     }
 
-    private void sendDetailRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
-        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                // we got the response, now our job is to handle it
-                //parseXmlResponse(response);
-                try{
-                    //xmlparser.readLocation(response);
-                    xmlparser.readXml(Constants.LOCATION_XML, response);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                sendDetailRequest();
-            }
-        });
-        queue.add(request);
-    }
-
-    private void sendPathRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
-        xmlparser.addObserver(this);
-        String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                // we got the response, now our job is to handle it
-                //parseXmlResponse(response);
-                try{
-                    //xmlparser.readStopXml(response);
-                    xmlparser.readXml(Constants.STOP_XML, response);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                sendPathRequest();
-            }
-        });
-        queue.add(request);
-    }
-
     public void getDataList(){
         detailsList = getAllOrderedDetails();
         for(int i=0; i<detailsList.size(); i++){
@@ -155,7 +95,6 @@ public class WearService extends WearableListenerService  implements Observer {
             detailsList.get(i).getNetPrediction(this);
         }
     }
-
 
     class SendToDataLayerThread extends Thread {
         String path;
