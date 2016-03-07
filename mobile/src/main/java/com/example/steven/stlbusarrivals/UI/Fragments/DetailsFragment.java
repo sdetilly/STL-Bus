@@ -25,8 +25,12 @@ import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.VolleySingleton;
 import com.example.steven.stlbusarrivals.XmlParser;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Observable;
 import java.util.Observer;
@@ -41,6 +45,7 @@ public class DetailsFragment extends Fragment implements Observer{
     private XmlParser xmlparser = new XmlParser();
     private String stopId, routeTag, stopName, routeName;
     TextView tv_routeName, tv_stopName, firstPrediction, secondPrediction;
+    ArrayList<Details> detailsList;
 
 
 
@@ -92,6 +97,22 @@ public class DetailsFragment extends Fragment implements Observer{
         queue.add(request);
     }
 
+    private ArrayList<Details> getAllOrderedDetails() {
+        // Construct the data source
+        // get our query builder from the DAO
+        QueryBuilder<Details, Integer> queryBuilder = getHelper().getDetailsDao().queryBuilder();
+        // the 'password' field must be equal to "qwerty"
+        // prepare our sql statement
+        PreparedQuery<Details> preparedQuery = null;
+        try {
+            preparedQuery = queryBuilder.prepare();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return (ArrayList) getHelper().getDetailsDao().query(preparedQuery);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -104,11 +125,12 @@ public class DetailsFragment extends Fragment implements Observer{
         tv_routeName.setText(routeName);
         tv_stopName.setText(stopName);
 
-        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        detailsList = getAllOrderedDetails();
+
+        final FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Details details = new Details(getActivity());
                 details.setTag(routeTag);
                 details.setStopId(stopId);
@@ -116,8 +138,14 @@ public class DetailsFragment extends Fragment implements Observer{
                 details.setStopName(stopName);
                 getHelper().getDetailsDao().create(details);
                 Toast.makeText(getActivity(), " Stop added to favorites!", Toast.LENGTH_SHORT).show();
+                fab.setVisibility(View.GONE);
             }
         });
+        for(int i=0; i<detailsList.size();i++){
+            if(detailsList.get(i).getStopId().equals(stopId)){
+                fab.setVisibility(View.GONE);
+            }
+        }
         return v;
     }
 

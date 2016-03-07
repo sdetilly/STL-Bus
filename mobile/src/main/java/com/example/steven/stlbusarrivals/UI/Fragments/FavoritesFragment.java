@@ -141,6 +141,12 @@ public class FavoritesFragment extends Fragment implements Observer{
     public void onResume(){
         super.onResume();
         detailsList = getAllOrderedDetails();
+        getDetailPrediction();
+        detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);
+
+    }
+
+    private void getDetailPrediction(){
         if(detailsList.size() >0 && detailsList != null) {
             for (int i = 0; i < detailsList.size(); i++) {
                 Log.d("favoritefrag", "adding observers...");
@@ -148,24 +154,21 @@ public class FavoritesFragment extends Fragment implements Observer{
                 detailsList.get(i).getNetPrediction(getActivity());
             }
         }
-        detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);
-        /*listView.setAdapter(detailsAdapter);
-        detailsAdapter.notifyDataSetChanged();*/
     }
 
     private void deleteDetails(){
         getHelper().getDetailsDao().deleteById(this.lastClickedDetailsId);
         detailsList = getAllOrderedDetails();
-        this.detailsAdapter.clear();
-        this.detailsAdapter.addAll(detailsList);
-        this.detailsAdapter.notifyDataSetChanged();
-        Log.i(MainActivity.class.getName(), String.valueOf(this.lastClickedDetailsId));
+        detailsAdapter = null;
+        getDetailPrediction();
+        detailsAdapter = new DetailsAdapter(getActivity(),R.layout.row_favorites, detailsList);
     }
 
     @Override
     public void update(Observable observable, Object o) {
         Log.d("favoritesfrag update", "entered");
-        this.detailsAdapter.notifyDataSetChanged();
+        detailsAdapter.notifyDataSetChanged();
         listView.setAdapter(detailsAdapter);
+        detailsAdapter.notifyDataSetChanged();
     }
 }
