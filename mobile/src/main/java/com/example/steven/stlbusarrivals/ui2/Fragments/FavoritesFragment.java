@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.UI.Fragments;
+package com.example.steven.stlbusarrivals.ui2.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,11 +12,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 
-import com.example.steven.stlbusarrivals.DAO.DatabaseHelper;
-import com.example.steven.stlbusarrivals.Model.Details;
+import com.example.steven.stlbusarrivals.dao2.DatabaseHelper;
+import com.example.steven.stlbusarrivals.model2.Details;
 import com.example.steven.stlbusarrivals.R;
-import com.example.steven.stlbusarrivals.UI.Activity.StopDetailsActivity;
-import com.example.steven.stlbusarrivals.UI.Adapter.DetailsAdapter;
+import com.example.steven.stlbusarrivals.ui2.Activity.StopDetailsActivity;
+import com.example.steven.stlbusarrivals.ui2.Adapter.DetailsAdapter;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.util.ArrayList;

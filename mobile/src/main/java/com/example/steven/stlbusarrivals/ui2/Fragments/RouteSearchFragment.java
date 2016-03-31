@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.UI.Fragments;
+package com.example.steven.stlbusarrivals.ui2.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,19 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+
 import com.example.steven.stlbusarrivals.Constants;
-import com.example.steven.stlbusarrivals.Model.Route;
-import com.example.steven.stlbusarrivals.Model.RouteList;
+import com.example.steven.stlbusarrivals.model2.Route;
+import com.example.steven.stlbusarrivals.model2.RouteList;
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.RequestSender;
-import com.example.steven.stlbusarrivals.UI.Activity.StopSearchActivity;
-import com.example.steven.stlbusarrivals.UI.Adapter.RouteSearchAdapter;
-import com.example.steven.stlbusarrivals.VolleySingleton;
-import com.example.steven.stlbusarrivals.XmlParser;
+import com.example.steven.stlbusarrivals.ui2.Activity.StopSearchActivity;
+import com.example.steven.stlbusarrivals.ui2.Adapter.RouteSearchAdapter;
+
 import java.util.Observable;
 import java.util.Observer;
 

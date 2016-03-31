@@ -1,32 +1,20 @@
-package com.example.steven.stlbusarrivals.UI.Fragments;
+package com.example.steven.stlbusarrivals.ui2.Fragments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.example.steven.stlbusarrivals.Constants;
-import com.example.steven.stlbusarrivals.Model.PathBounds;
-import com.example.steven.stlbusarrivals.Model.PathList;
-import com.example.steven.stlbusarrivals.Model.Point;
-import com.example.steven.stlbusarrivals.Model.VehiculeList;
+import com.example.steven.stlbusarrivals.model2.PathBounds;
+import com.example.steven.stlbusarrivals.model2.PathList;
+import com.example.steven.stlbusarrivals.model2.Point;
+import com.example.steven.stlbusarrivals.model2.VehiculeList;
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.RequestSender;
-import com.example.steven.stlbusarrivals.VolleySingleton;
-import com.example.steven.stlbusarrivals.XmlParser;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

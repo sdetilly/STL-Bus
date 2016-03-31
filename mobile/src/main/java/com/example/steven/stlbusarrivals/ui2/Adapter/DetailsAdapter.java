@@ -1,15 +1,13 @@
-package com.example.steven.stlbusarrivals.UI.Adapter;
+package com.example.steven.stlbusarrivals.ui2.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.example.steven.stlbusarrivals.Model.Details;
-import com.example.steven.stlbusarrivals.Model.TimeList;
+import com.example.steven.stlbusarrivals.model2.Details;
 import com.example.steven.stlbusarrivals.R;
 import java.util.ArrayList;
 import java.util.Calendar;

@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.Model;
+package com.example.steven.stlbusarrivals.model2;
 
 import java.util.ArrayList;
 

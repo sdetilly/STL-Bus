@@ -1,29 +1,20 @@
-package com.example.steven.stlbusarrivals.UI.Activity;
+package com.example.steven.stlbusarrivals.ui2.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+
 import com.example.steven.stlbusarrivals.Constants;
-import com.example.steven.stlbusarrivals.Model.PathList;
-import com.example.steven.stlbusarrivals.Model.Route;
-import com.example.steven.stlbusarrivals.Model.Stop;
-import com.example.steven.stlbusarrivals.Model.StopList;
+import com.example.steven.stlbusarrivals.model2.Stop;
+import com.example.steven.stlbusarrivals.model2.StopList;
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.RequestSender;
-import com.example.steven.stlbusarrivals.UI.Adapter.StopSearchAdapter;
-import com.example.steven.stlbusarrivals.VolleySingleton;
-import com.example.steven.stlbusarrivals.XmlParser;
+import com.example.steven.stlbusarrivals.ui2.Adapter.StopSearchAdapter;
+
 import java.util.Observable;
 import java.util.Observer;
 

@@ -1,16 +1,10 @@
-package com.example.steven.stlbusarrivals.Model;
+package com.example.steven.stlbusarrivals.model2;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.example.steven.stlbusarrivals.Constants;
 import com.example.steven.stlbusarrivals.RequestSender;
-import com.example.steven.stlbusarrivals.VolleySingleton;
-import com.example.steven.stlbusarrivals.XmlParser;
 import com.google.android.gms.wearable.DataMap;
 import com.j256.ormlite.field.DatabaseField;
 

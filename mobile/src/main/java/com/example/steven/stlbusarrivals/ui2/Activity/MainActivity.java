@@ -1,17 +1,16 @@
-package com.example.steven.stlbusarrivals.UI.Activity;
+package com.example.steven.stlbusarrivals.ui2.Activity;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.steven.stlbusarrivals.R;
-import com.example.steven.stlbusarrivals.UI.Fragments.FavoritesFragment;
-import com.example.steven.stlbusarrivals.UI.Fragments.RouteSearchFragment;
+import com.example.steven.stlbusarrivals.ui2.Fragments.FavoritesFragment;
+import com.example.steven.stlbusarrivals.ui2.Fragments.RouteSearchFragment;
 
 public class MainActivity extends AppCompatActivity {
 

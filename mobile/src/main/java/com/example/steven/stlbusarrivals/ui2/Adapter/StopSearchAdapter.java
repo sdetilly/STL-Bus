@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.UI.Adapter;
+package com.example.steven.stlbusarrivals.ui2.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,20 +8,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.example.steven.stlbusarrivals.Model.Route;
+import com.example.steven.stlbusarrivals.model2.Stop;
 import com.example.steven.stlbusarrivals.R;
 
 import java.util.ArrayList;
 
 /**
- * Created by Steven on 2016-01-26.
+ * Created by Steven on 2016-01-28.
  */
-public class RouteSearchAdapter extends ArrayAdapter<Route> {
+public class StopSearchAdapter extends ArrayAdapter<Stop> {
 
     private LayoutInflater inflater;
     private Context context;
 
-    public RouteSearchAdapter(Context context, int rowLayoutResourceId, ArrayList<Route> list) {
+    public StopSearchAdapter(Context context, int rowLayoutResourceId, ArrayList<Stop> list) {
         super(context, rowLayoutResourceId, list);
         this.inflater = LayoutInflater.from(context);
         this.context = context;
@@ -35,19 +35,19 @@ public class RouteSearchAdapter extends ArrayAdapter<Route> {
         if (view != null) {
             holder = (ViewHolder) view.getTag();
         } else {
-            view = inflater.inflate(R.layout.row_route_search_list, parent, false);
+            view = inflater.inflate(R.layout.row_stop_search_list, parent, false);
             holder = new ViewHolder();
-            holder.routeName = (TextView) view.findViewById(R.id.tv_row_route_name);
+            holder.stopName = (TextView) view.findViewById(R.id.tv_row_stop_name);
             view.setTag(holder);
         }
 
-        Route item = getItem(position);
-        holder.routeName.setText(item.getName());
+        Stop item = getItem(position);
+        holder.stopName.setText(item.getTitle());
 
         return view;
     }
 
     static class ViewHolder {
-        TextView routeName;
+        TextView stopName;
     }
 }
