@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.ui2.Activity;
+package com.example.steven.stlbusarrivals.ui.Activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,8 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.steven.stlbusarrivals.R;
-import com.example.steven.stlbusarrivals.ui2.Fragments.DetailsFragment;
-import com.example.steven.stlbusarrivals.ui2.Fragments.MapsFragment;
+import com.example.steven.stlbusarrivals.ui.Fragments.DetailsFragment;
+import com.example.steven.stlbusarrivals.ui.Fragments.MapsFragment;
 
 public class StopDetailsActivity extends AppCompatActivity{
 

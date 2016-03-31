@@ -6,12 +6,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.steven.stlbusarrivals.model2.PathBounds;
-import com.example.steven.stlbusarrivals.model2.PathList;
-import com.example.steven.stlbusarrivals.model2.RouteList;
-import com.example.steven.stlbusarrivals.model2.StopList;
-import com.example.steven.stlbusarrivals.model2.TimeList;
-import com.example.steven.stlbusarrivals.model2.VehiculeList;
+import com.example.steven.stlbusarrivals.model.PathBounds;
+import com.example.steven.stlbusarrivals.model.PathList;
+import com.example.steven.stlbusarrivals.model.RouteList;
+import com.example.steven.stlbusarrivals.model.StopList;
+import com.example.steven.stlbusarrivals.model.TimeList;
+import com.example.steven.stlbusarrivals.model.VehiculeList;
 
 import java.util.ArrayList;
 import java.util.Observable;

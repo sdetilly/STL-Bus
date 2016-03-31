@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.model2;
+package com.example.steven.stlbusarrivals.model;
 
 /**
  * Created by Steven on 2016-01-25.

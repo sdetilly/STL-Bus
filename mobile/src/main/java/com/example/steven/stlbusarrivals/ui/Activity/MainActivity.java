@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.ui2.Activity;
+package com.example.steven.stlbusarrivals.ui.Activity;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -9,8 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.steven.stlbusarrivals.R;
-import com.example.steven.stlbusarrivals.ui2.Fragments.FavoritesFragment;
-import com.example.steven.stlbusarrivals.ui2.Fragments.RouteSearchFragment;
+import com.example.steven.stlbusarrivals.ui.Fragments.FavoritesFragment;
+import com.example.steven.stlbusarrivals.ui.Fragments.RouteSearchFragment;
 
 public class MainActivity extends AppCompatActivity {
 

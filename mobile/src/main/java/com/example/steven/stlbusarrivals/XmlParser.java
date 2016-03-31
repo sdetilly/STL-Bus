@@ -2,18 +2,18 @@ package com.example.steven.stlbusarrivals;
 
 import android.os.AsyncTask;
 
-import com.example.steven.stlbusarrivals.model2.Path;
-import com.example.steven.stlbusarrivals.model2.PathBounds;
-import com.example.steven.stlbusarrivals.model2.Point;
-import com.example.steven.stlbusarrivals.model2.PathList;
-import com.example.steven.stlbusarrivals.model2.Route;
-import com.example.steven.stlbusarrivals.model2.RouteList;
-import com.example.steven.stlbusarrivals.model2.Stop;
-import com.example.steven.stlbusarrivals.model2.StopList;
-import com.example.steven.stlbusarrivals.model2.TimeList;
-import com.example.steven.stlbusarrivals.model2.TimePrediction;
-import com.example.steven.stlbusarrivals.model2.Vehicule;
-import com.example.steven.stlbusarrivals.model2.VehiculeList;
+import com.example.steven.stlbusarrivals.model.Path;
+import com.example.steven.stlbusarrivals.model.PathBounds;
+import com.example.steven.stlbusarrivals.model.Point;
+import com.example.steven.stlbusarrivals.model.PathList;
+import com.example.steven.stlbusarrivals.model.Route;
+import com.example.steven.stlbusarrivals.model.RouteList;
+import com.example.steven.stlbusarrivals.model.Stop;
+import com.example.steven.stlbusarrivals.model.StopList;
+import com.example.steven.stlbusarrivals.model.TimeList;
+import com.example.steven.stlbusarrivals.model.TimePrediction;
+import com.example.steven.stlbusarrivals.model.Vehicule;
+import com.example.steven.stlbusarrivals.model.VehiculeList;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;

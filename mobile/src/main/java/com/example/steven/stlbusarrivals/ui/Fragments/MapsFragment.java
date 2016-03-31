@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.ui2.Fragments;
+package com.example.steven.stlbusarrivals.ui.Fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,10 +9,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.steven.stlbusarrivals.Constants;
-import com.example.steven.stlbusarrivals.model2.PathBounds;
-import com.example.steven.stlbusarrivals.model2.PathList;
-import com.example.steven.stlbusarrivals.model2.Point;
-import com.example.steven.stlbusarrivals.model2.VehiculeList;
+import com.example.steven.stlbusarrivals.model.PathBounds;
+import com.example.steven.stlbusarrivals.model.PathList;
+import com.example.steven.stlbusarrivals.model.Point;
+import com.example.steven.stlbusarrivals.model.VehiculeList;
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.RequestSender;
 import com.google.android.gms.maps.CameraUpdateFactory;

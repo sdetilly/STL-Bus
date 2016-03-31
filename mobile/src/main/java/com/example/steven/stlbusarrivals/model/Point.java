@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.model2;
+package com.example.steven.stlbusarrivals.model;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.wearable.DataMap;

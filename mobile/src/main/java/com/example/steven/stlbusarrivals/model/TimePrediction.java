@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.model2;
+package com.example.steven.stlbusarrivals.model;
 
 
 /**

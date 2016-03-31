@@ -1,10 +1,10 @@
-package com.example.steven.stlbusarrivals.dao2;
+package com.example.steven.stlbusarrivals.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.steven.stlbusarrivals.model2.Details;
+import com.example.steven.stlbusarrivals.model.Details;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;

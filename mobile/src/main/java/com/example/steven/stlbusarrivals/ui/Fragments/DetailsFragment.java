@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.ui2.Fragments;
+package com.example.steven.stlbusarrivals.ui.Fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,9 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.steven.stlbusarrivals.Constants;
-import com.example.steven.stlbusarrivals.dao2.DatabaseHelper;
-import com.example.steven.stlbusarrivals.model2.Details;
-import com.example.steven.stlbusarrivals.model2.TimeList;
+import com.example.steven.stlbusarrivals.dao.DatabaseHelper;
+import com.example.steven.stlbusarrivals.model.Details;
+import com.example.steven.stlbusarrivals.model.TimeList;
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.RequestSender;
 import com.j256.ormlite.android.apptools.OpenHelperManager;

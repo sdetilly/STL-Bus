@@ -2,12 +2,12 @@ package com.example.steven.stlbusarrivals;
 
 import android.util.Log;
 
-import com.example.steven.stlbusarrivals.dao2.DatabaseHelper;
-import com.example.steven.stlbusarrivals.model2.Details;
-import com.example.steven.stlbusarrivals.model2.PathBounds;
-import com.example.steven.stlbusarrivals.model2.PathList;
-import com.example.steven.stlbusarrivals.model2.TimeList;
-import com.example.steven.stlbusarrivals.model2.VehiculeList;
+import com.example.steven.stlbusarrivals.dao.DatabaseHelper;
+import com.example.steven.stlbusarrivals.model.Details;
+import com.example.steven.stlbusarrivals.model.PathBounds;
+import com.example.steven.stlbusarrivals.model.PathList;
+import com.example.steven.stlbusarrivals.model.TimeList;
+import com.example.steven.stlbusarrivals.model.VehiculeList;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataMap;

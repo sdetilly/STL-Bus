@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.ui2.Fragments;
+package com.example.steven.stlbusarrivals.ui.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,12 +11,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.steven.stlbusarrivals.Constants;
-import com.example.steven.stlbusarrivals.model2.Route;
-import com.example.steven.stlbusarrivals.model2.RouteList;
+import com.example.steven.stlbusarrivals.model.Route;
+import com.example.steven.stlbusarrivals.model.RouteList;
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.RequestSender;
-import com.example.steven.stlbusarrivals.ui2.Activity.StopSearchActivity;
-import com.example.steven.stlbusarrivals.ui2.Adapter.RouteSearchAdapter;
+import com.example.steven.stlbusarrivals.ui.Activity.StopSearchActivity;
+import com.example.steven.stlbusarrivals.ui.Adapter.RouteSearchAdapter;
 
 import java.util.Observable;
 import java.util.Observer;

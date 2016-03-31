@@ -1,4 +1,4 @@
-package com.example.steven.stlbusarrivals.ui2.Activity;
+package com.example.steven.stlbusarrivals.ui.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,11 +9,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.steven.stlbusarrivals.Constants;
-import com.example.steven.stlbusarrivals.model2.Stop;
-import com.example.steven.stlbusarrivals.model2.StopList;
+import com.example.steven.stlbusarrivals.model.Stop;
+import com.example.steven.stlbusarrivals.model.StopList;
 import com.example.steven.stlbusarrivals.R;
 import com.example.steven.stlbusarrivals.RequestSender;
-import com.example.steven.stlbusarrivals.ui2.Adapter.StopSearchAdapter;
+import com.example.steven.stlbusarrivals.ui.Adapter.StopSearchAdapter;
 
 import java.util.Observable;
 import java.util.Observer;
