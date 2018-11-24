@@ -1,6 +1,10 @@
 <resources>
-    <string name="app_name">STL Bus Arrivals</string>
-    <string name="hello_world">Hello World!</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="app_name">STL Bus</string>
     <string name="intro_text">Long click to exit the map.</string>
+    <string name="no_bus">No buses at this time</string>
+    <string name="next_bus">In %1$s minutes</string>
+    <string name="server_no_bus">server did not return vehicle location</string>
+    <string name="bus_location">Bus location</string>
+
+
 </resources>
