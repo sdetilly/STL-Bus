@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_maps">Carte</string>
+    <string name="favorites">Favoris</string>
+    <string name="search">Rechercher</string>
+    <string name="stop_details">Détails de l\'arrêt</string>
+    <string name="details">Détails</string>
+    <string name="map">Carte</string>
+    <string name="next_bus">Prochain bus arrive dans %1$s minutes</string>
+    <string name="other_bus">Autre bus arrive dans %1$s minutes</string>
+    <string name="no_bus">Il n\'y a pas de bus en ce moment</string>
+    <string name="added_favorites">L\'arrêt est rajouté à vos favoris!</string>
+    <string name="server_no_bus">Le serveur n\'a pas retourné la location du bus</string>
+    <string name="bus_location">Localisation du bus</string>
+
+
+</resources>

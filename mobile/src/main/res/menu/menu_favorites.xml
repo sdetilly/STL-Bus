@@ -7,4 +7,10 @@
         android:title="Delete"
         android:orderInCategory="2"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/copy"
+        android:title="copy"
+        android:orderInCategory="2"
+        app:showAsAction="never" />
 </menu>

@@ -6,7 +6,7 @@
     android:id="@+id/root_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.steven.stlbusarrivals.MapsActivity">
+    tools:context="com.tilly.steven.stlbusarrivals.MapsActivity">
 
     <FrameLayout
         android:id="@+id/map_container"
