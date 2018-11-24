@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +20,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.tilly.steven.stlbusarrivals.Model.PathBounds;
-import com.tilly.steven.stlbusarrivals.Model.PathList;
-import com.tilly.steven.stlbusarrivals.Model.Point;
-import com.tilly.steven.stlbusarrivals.Model.VehiculeList;
-import com.tilly.steven.stlbusarrivals.R;
-import com.tilly.steven.stlbusarrivals.VolleySingleton;
-import com.tilly.steven.stlbusarrivals.XmlParser;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,6 +29,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.tilly.steven.stlbusarrivals.Model.PathBounds;
+import com.tilly.steven.stlbusarrivals.Model.PathList;
+import com.tilly.steven.stlbusarrivals.Model.Point;
+import com.tilly.steven.stlbusarrivals.Model.VehiculeList;
+import com.tilly.steven.stlbusarrivals.R;
+import com.tilly.steven.stlbusarrivals.Utils;
+import com.tilly.steven.stlbusarrivals.VolleySingleton;
+import com.tilly.steven.stlbusarrivals.XmlParser;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -217,6 +220,19 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
         mMap = googleMap;
         if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
+
+            int permissionCheck = ContextCompat.checkSelfPermission(
+                    getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+            if(permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Utils.toast(getContext(), "Permission Needed");
+                } else {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
+                }
+            } else {
+                Toast.makeText(getContext(), "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
+            }
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -229,4 +245,24 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Observ
         sendPathRequest();
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch(requestCode) {
+            case 100:
+                if(grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mMap.setMyLocationEnabled(true);
+                        sendPathRequest();
+                        Toast.makeText(getContext(), "Permission Granted!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                    }
+            }
+    }
+
 }
