@@ -15,12 +15,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <me.grantland.widget.AutofitTextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:id="@+id/tv_details_route_name"
-            android:singleLine="true"
+            app:autoSizeTextType="uniform"
             android:gravity="center"
             android:textSize="20sp"
             tools:text="Direction XXX"/>
@@ -30,12 +30,12 @@
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"/>
 
-        <me.grantland.widget.AutofitTextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:id="@+id/tv_details_stop_name"
-            android:singleLine="true"
+            app:autoSizeTextType="uniform"
             android:gravity="center"
             android:textSize="20sp"
             tools:text="Stop XXX"/>

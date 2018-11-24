@@ -6,11 +6,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.tilly.steven.stlbusarrivals.Model.Details;
-import com.tilly.steven.stlbusarrivals.Model.PathBounds;
-import com.tilly.steven.stlbusarrivals.Model.PathList;
-import com.tilly.steven.stlbusarrivals.Model.TimeList;
-import com.tilly.steven.stlbusarrivals.Model.VehiculeList;
+import com.tilly.steven.stlbusarrivals.model.Details;
+import com.tilly.steven.stlbusarrivals.model.PathBounds;
+import com.tilly.steven.stlbusarrivals.model.PathList;
+import com.tilly.steven.stlbusarrivals.model.TimeList;
+import com.tilly.steven.stlbusarrivals.model.VehiculeList;
 import com.tilly.steven.stlbusarrivals.dao.DatabaseHelper;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
@@ -76,7 +76,7 @@ public class WearService extends WearableListenerService  implements Observer {
     }
 
     private void sendDetailRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
+        RequestQueue queue = VolleySingleton.Companion.getInstance(this).getRequestQueue();
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=" + routeTag + "&t=0";
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
 
@@ -103,7 +103,7 @@ public class WearService extends WearableListenerService  implements Observer {
     }
 
     private void sendPathRequest(){
-        RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
+        RequestQueue queue = VolleySingleton.Companion.getInstance(this).getRequestQueue();
         xmlparser.addObserver(this);
         String url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r="+ routeTag;
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {
