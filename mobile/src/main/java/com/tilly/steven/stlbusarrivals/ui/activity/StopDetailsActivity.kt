@@ -1,10 +1,10 @@
 package com.tilly.steven.stlbusarrivals.ui.activity
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 
 import com.tilly.steven.stlbusarrivals.R
@@ -12,13 +12,13 @@ import com.tilly.steven.stlbusarrivals.ui.fragments.DetailsFragment
 import com.tilly.steven.stlbusarrivals.ui.fragments.MapsFragment
 
 class StopDetailsActivity : AppCompatActivity() {
-    lateinit var adapterViewPager: FragmentPagerAdapter
+    lateinit var adapterViewPager: androidx.fragment.app.FragmentPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stop_details)
 
-        val vpPager = findViewById<View>(R.id.pager_details) as ViewPager
+        val vpPager = findViewById<View>(R.id.pager_details) as androidx.viewpager.widget.ViewPager
         adapterViewPager = MyPagerAdapter(supportFragmentManager)
         vpPager.adapter = adapterViewPager
 
@@ -31,7 +31,7 @@ class StopDetailsActivity : AppCompatActivity() {
         setTitle(R.string.stop_details)
     }
 
-    inner class MyPagerAdapter(fragmentManager: android.support.v4.app.FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+    inner class MyPagerAdapter(fragmentManager: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fragmentManager) {
         private val NUM_ITEMS = 2
 
         private val tabTitles = arrayOf(getString(R.string.details), getString(R.string.map))
@@ -43,7 +43,7 @@ class StopDetailsActivity : AppCompatActivity() {
 
         // Returns the fragment to display for that page
 
-        override fun getItem(position: Int): Fragment? {
+        override fun getItem(position: Int): androidx.fragment.app.Fragment? {
             when (position) {
                 0 // Fragment # 0 - This will show FavoritesFragment
                 -> {

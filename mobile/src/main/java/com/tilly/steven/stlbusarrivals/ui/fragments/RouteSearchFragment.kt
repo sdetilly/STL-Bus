@@ -2,7 +2,7 @@ package com.tilly.steven.stlbusarrivals.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +20,7 @@ import com.tilly.steven.stlbusarrivals.ui.adapter.RouteSearchAdapter
 import java.util.*
 
 
-class RouteSearchFragment : Fragment(), Observer {
+class RouteSearchFragment : androidx.fragment.app.Fragment(), Observer {
 
     private lateinit var listView: ListView
     private lateinit var routeSearchAdapter: RouteSearchAdapter

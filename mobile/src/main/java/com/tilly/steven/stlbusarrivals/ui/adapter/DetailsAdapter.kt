@@ -14,7 +14,7 @@ import java.util.*
 /**
  * Created by Steven on 2016-01-28.
  */
-class DetailsAdapter(private val ctx: Context, rowLayoutResourceId: Int, list: ArrayList<Details>) : ArrayAdapter<Details>(ctx, rowLayoutResourceId, list) {
+class DetailsAdapter(private val ctx: Context, rowLayoutResourceId: Int, list: List<Details>) : ArrayAdapter<Details>(ctx, rowLayoutResourceId, list) {
 
     private val inflater: LayoutInflater = LayoutInflater.from(ctx)
     private var prediction: String? = null

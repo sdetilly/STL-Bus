@@ -2,10 +2,12 @@ package com.tilly.steven.stlbusarrivals.model
 
 import android.content.Context
 import android.util.Log
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.google.android.gms.wearable.DataMap
-import com.j256.ormlite.field.DatabaseField
 import com.tilly.steven.stlbusarrivals.VolleySingleton
 import com.tilly.steven.stlbusarrivals.XmlParser
 import java.util.*
@@ -13,21 +15,23 @@ import java.util.*
 /**
  * Created by Steven on 2016-01-29.
  */
+@Entity(tableName = "detail")
 class Details : Observable(), Observer {
 
+    @Ignore
     private val xmlparser = XmlParser()
+
+    @Ignore
     var prediction: String? = null
+
+    @Ignore
     private var timeList: TimeList? = null
 
-    @DatabaseField(generatedId = true)
+    @PrimaryKey(autoGenerate = true)
     var id: Int = 0
-    @DatabaseField
     var tag: String = ""
-    @DatabaseField
     var stopId: String = ""
-    @DatabaseField
     var routeName: String = ""
-    @DatabaseField
     var stopName: String = ""
 
     fun putData(): DataMap {

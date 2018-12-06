@@ -7,9 +7,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +34,7 @@ import java.util.*
 /**
  * Created by Steven on 2016-01-28.
  */
-class MapsFragment : Fragment(), OnMapReadyCallback, Observer {
+class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Observer {
 
     private var mMap: GoogleMap? = null
     private var pathList: ArrayList<ArrayList<Point>>? = null

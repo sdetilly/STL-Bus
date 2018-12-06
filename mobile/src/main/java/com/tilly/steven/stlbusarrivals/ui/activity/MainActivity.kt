@@ -1,10 +1,10 @@
 package com.tilly.steven.stlbusarrivals.ui.activity
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -15,8 +15,8 @@ import com.tilly.steven.stlbusarrivals.ui.fragments.RouteSearchFragment
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var adapterViewPager: FragmentPagerAdapter
-    lateinit var vpPager: ViewPager
+    lateinit var adapterViewPager: androidx.fragment.app.FragmentPagerAdapter
+    lateinit var vpPager: androidx.viewpager.widget.ViewPager
     var vpagerItem: Int = 0
 
 
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainAct loading...", "" + savedInstanceState.getInt("currentItem"))
         }
         vpPager.adapter = adapterViewPager
-        vpPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        vpPager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
 
             override fun onPageSelected(pos: Int) {
                 vpagerItem = pos
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    inner class MyPagerAdapter(fragmentManager: android.support.v4.app.FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+    inner class MyPagerAdapter(fragmentManager: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fragmentManager) {
         private val NUM_ITEMS = 2
 
         private val tabTitles = arrayOf(getString(R.string.favorites), getString(R.string.search))
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         // Returns the fragment to display for that page
 
-        override fun getItem(position: Int): Fragment? {
+        override fun getItem(position: Int): androidx.fragment.app.Fragment? {
             when (position) {
                 0 // Fragment # 0 - This will show FavoritesFragment
                 -> return FavoritesFragment()

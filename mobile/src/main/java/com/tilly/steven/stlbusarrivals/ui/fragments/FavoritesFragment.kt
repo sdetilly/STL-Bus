@@ -3,7 +3,6 @@ package com.tilly.steven.stlbusarrivals.ui.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,51 +11,23 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.PopupMenu
 import com.android.volley.RequestQueue
-import com.j256.ormlite.android.apptools.OpenHelperManager
-import com.j256.ormlite.stmt.PreparedQuery
+import com.tilly.steven.stlbusarrivals.DetailsDatabase
 import com.tilly.steven.stlbusarrivals.R
 import com.tilly.steven.stlbusarrivals.VolleySingleton
-import com.tilly.steven.stlbusarrivals.dao.DatabaseHelper
 import com.tilly.steven.stlbusarrivals.model.Details
 import com.tilly.steven.stlbusarrivals.ui.activity.StopDetailsActivity
 import com.tilly.steven.stlbusarrivals.ui.adapter.DetailsAdapter
-import java.sql.SQLException
 import java.util.*
 
 
-class FavoritesFragment : Fragment(), Observer {
+class FavoritesFragment : androidx.fragment.app.Fragment(), Observer {
 
     lateinit var queue: RequestQueue
-    private var databaseHelper: DatabaseHelper? = null
     lateinit var listView: ListView
     lateinit var detailsAdapter: DetailsAdapter
-    var detailsList: ArrayList<Details>? = null
+    var detailsList: MutableList<Details>? = null
     private var lastClickedDetailsId: Int = 0
     private lateinit var mHandler: Handler
-
-    private// Construct the data source
-    // get our query builder from the DAO
-    // the 'password' field must be equal to "qwerty"
-    // prepare our sql statement
-    val allOrderedDetails: ArrayList<Details>
-        get() {
-            val queryBuilder = helper.getDetailsDao()?.queryBuilder()
-            var preparedQuery: PreparedQuery<Details>? = null
-            try {
-                preparedQuery = queryBuilder?.prepare()
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            }
-
-            return helper.getDetailsDao()!!.query(preparedQuery) as ArrayList<Details>
-        }
-    private val helper: DatabaseHelper
-        get() {
-            if (databaseHelper == null) {
-                databaseHelper = OpenHelperManager.getHelper(activity, DatabaseHelper::class.java)
-            }
-            return databaseHelper!!
-        }
 
     var mStatusChecker: Runnable = object : Runnable {
         override fun run() {
@@ -104,7 +75,7 @@ class FavoritesFragment : Fragment(), Observer {
 
                 if (id2 == R.id.item_delete) {
                     Log.d("MainActivity", "will delete timer...")
-                    deleteDetails()
+                    deleteDetails(item)
                 }
                 true
             }
@@ -114,19 +85,14 @@ class FavoritesFragment : Fragment(), Observer {
         return v
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (databaseHelper != null) {
-            OpenHelperManager.releaseHelper()
-            databaseHelper = null
-        }
-    }
-
     override fun onResume() {
         super.onResume()
-        detailsList = allOrderedDetails
+        DetailsDatabase.getInstance().detailsDao().loadDetails().observe(this, androidx.lifecycle.Observer {
+            detailsList = it.toMutableList()
+            detailsAdapter = DetailsAdapter(activity!!, R.layout.row_favorites, detailsList!!)
+
+        })
         startRepeatingTask()
-        detailsAdapter = DetailsAdapter(activity!!, R.layout.row_favorites, detailsList!!)
     }
 
     private fun startRepeatingTask() {
@@ -146,16 +112,13 @@ class FavoritesFragment : Fragment(), Observer {
                 detailsList!![i].getNetPrediction(activity!!)
             }
         } else {
-            detailsList!!.clear()
+            detailsList?.clear()
         }
     }
 
-    private fun deleteDetails() {
-        helper.getDetailsDao()!!.deleteById(this.lastClickedDetailsId)
-        detailsList = allOrderedDetails
-        //detailsAdapter = null
+    private fun deleteDetails(details: Details) {
+        DetailsDatabase.getInstance().detailsDao().deleteDetail(details)
         getDetailPrediction()
-        detailsAdapter = DetailsAdapter(activity!!, R.layout.row_favorites, detailsList!!)
     }
 
     override fun update(observable: Observable, o: Any) {

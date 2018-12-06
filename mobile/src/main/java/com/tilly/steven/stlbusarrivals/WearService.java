@@ -11,7 +11,6 @@ import com.tilly.steven.stlbusarrivals.model.PathBounds;
 import com.tilly.steven.stlbusarrivals.model.PathList;
 import com.tilly.steven.stlbusarrivals.model.TimeList;
 import com.tilly.steven.stlbusarrivals.model.VehiculeList;
-import com.tilly.steven.stlbusarrivals.dao.DatabaseHelper;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataMap;
@@ -22,13 +21,7 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-
 import org.joda.time.DateTime;
-
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -41,7 +34,6 @@ public class WearService extends WearableListenerService  implements Observer {
     GoogleApiClient googleClient;
     XmlParser xmlparser = new XmlParser();
     ArrayList<Details> detailsList;
-    DatabaseHelper databaseHelper = null;
     static String routeTag;
     static int update= 0; //to send the data only when all details have finished syncing
 
@@ -61,7 +53,7 @@ public class WearService extends WearableListenerService  implements Observer {
             final String message = new String(messageEvent.getData());
 
             Log.v("mobListenerService", "Message received on phone is: " + message);
-            getDataList();
+            //getDataList();
         }else if (messageEvent.getPath().equals("/maps_req")) {
             routeTag = new String(messageEvent.getData());
 
@@ -130,15 +122,6 @@ public class WearService extends WearableListenerService  implements Observer {
         queue.add(request);
     }
 
-    public void getDataList(){
-        detailsList = getAllOrderedDetails();
-        for(int i=0; i<detailsList.size(); i++){
-            detailsList.get(i).addObserver(this);
-            detailsList.get(i).getNetPrediction(this);
-        }
-    }
-
-
     class SendToDataLayerThread extends Thread {
         String path;
         DataMap map;
@@ -172,37 +155,10 @@ public class WearService extends WearableListenerService  implements Observer {
         }
     }
 
-    private DatabaseHelper getHelper(){
-        if(databaseHelper == null){
-            databaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
-        }
-        return databaseHelper;
-    }
-
-    private ArrayList<Details> getAllOrderedDetails() {
-        // Construct the data source
-        // get our query builder from the DAO
-        QueryBuilder<Details, Integer> queryBuilder = getHelper().getDetailsDao().queryBuilder();
-        // the 'password' field must be equal to "qwerty"
-        // prepare our sql statement
-        PreparedQuery<Details> preparedQuery = null;
-        try {
-            preparedQuery = queryBuilder.prepare();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return (ArrayList) getHelper().getDetailsDao().query(preparedQuery);
-    }
-
     @Override
     public void onDestroy() {
         if (null != googleClient && googleClient.isConnected()) {
             googleClient.disconnect();
-        }
-        if(databaseHelper!=null){
-            OpenHelperManager.releaseHelper();
-            databaseHelper = null;
         }
         super.onDestroy();
     }
