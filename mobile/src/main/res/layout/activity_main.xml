@@ -8,14 +8,14 @@
     tools:context=".ui.activity.MainActivity"
     android:background="@android:color/transparent">
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/adView">
 
-        <android.support.v4.view.PagerTabStrip
+        <androidx.viewpager.widget.PagerTabStrip
             android:id="@+id/pager_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
             android:paddingBottom="4dp"
             android:paddingTop="4dp"
             android:textColor="#fff" />
-    </android.support.v4.view.ViewPager>
+    </androidx.viewpager.widget.ViewPager>
 
     <com.google.android.gms.ads.AdView
         android:id="@id/adView"
