@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
@@ -27,7 +26,6 @@ import com.tilly.steven.stlbusarrivals.VolleySingleton
 import com.tilly.steven.stlbusarrivals.XmlParser
 import com.tilly.steven.stlbusarrivals.model.PathBounds
 import com.tilly.steven.stlbusarrivals.model.PathList
-import com.tilly.steven.stlbusarrivals.model.Point
 import com.tilly.steven.stlbusarrivals.model.VehiculeList
 import java.util.*
 
@@ -37,13 +35,9 @@ import java.util.*
 class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Observer {
 
     private var mMap: GoogleMap? = null
-    private var pathList: ArrayList<ArrayList<Point>>? = null
-    private var vehiculeList: VehiculeList? = null
+    private var pathList: PathList = PathList()
     private val xmlparser = XmlParser()
-    private var longitude: String? = null
-    private var latitude: String? = null
     private var routeTag: String? = null
-    private var pathBounds: PathBounds? = null
     private lateinit var mHandler: Handler
 
     private var mStatusChecker: Runnable = object : Runnable {
@@ -54,11 +48,10 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         xmlparser.addObserver(this)
-        routeTag = arguments!!.getString("routeTag")
+        routeTag = arguments?.getString("routeTag")
         mHandler = Handler()
     }
 
@@ -120,14 +113,13 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
     override fun update(observable: Observable, o: Any) {
         if (activity != null) {
             if (o is VehiculeList) {
-                vehiculeList = o
-                if (vehiculeList!!.size != 0) {
+                if (o.size != 0) {
                     mMap!!.clear()
-                    for (i in vehiculeList!!.indices) {
-                        longitude = vehiculeList!![i].longitude
-                        latitude = vehiculeList!![i].latitude
+                    for (i in o.indices) {
+                        val longitude = o[i].longitude
+                        val latitude = o[i].latitude
                         if (longitude != "false") {
-                            val bus = LatLng(java.lang.Double.valueOf(latitude!!), java.lang.Double.valueOf(longitude!!))
+                            val bus = LatLng(java.lang.Double.valueOf(latitude), java.lang.Double.valueOf(longitude))
                             mMap!!.addMarker(MarkerOptions().position(bus).title(getString(R.string.bus_location))
                                     .icon(BitmapDescriptorFactory.fromBitmap(mapIcon()))
                                     .anchor(0.5f, 0.5f))
@@ -137,25 +129,25 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
                     mMap!!.clear()
                     Toast.makeText(activity, getString(R.string.server_no_bus), Toast.LENGTH_SHORT).show()
                 }
-                for (j in pathList!!.indices.reversed()) {
-                    for (i in pathList!![j].size - 1 downTo 1) {
+                for (j in pathList.indices.reversed()) {
+                    for (i in pathList[j].size - 1 downTo 1) {
 
                         mMap!!.addPolyline(PolylineOptions()
-                                .add(pathList!![j][i].latLng, pathList!![j][i - 1].latLng)
+                                .add(pathList[j][i].getLatLng(), pathList[j][i - 1].getLatLng())
                                 .width(5f)
                                 .color(Color.BLUE))
                     }
                 }
             }
             if (o is PathList) {
-                pathList = o as ArrayList<ArrayList<Point>>
+                pathList = o
                 startRepeatingTask()
             }
             if (o is PathBounds) {
-                pathBounds = o
+                val pathBounds = o
                 val bounds = LatLngBounds(
-                        pathBounds!!.minBounds, pathBounds!!.maxBounds)
-                mMap!!.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15))
+                        pathBounds.getMinBounds(), pathBounds.getMaxBounds())
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15))
             }
         }
     }
@@ -191,15 +183,9 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
             } else {
                 Toast.makeText(context, "Permission (already) Granted!", Toast.LENGTH_SHORT).show()
             }
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
-        mMap!!.isMyLocationEnabled = true
+        mMap.isMyLocationEnabled = true
         sendPathRequest()
 
     }
@@ -207,7 +193,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
         when (requestCode) {
-            100 -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            100 -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return
                 }
@@ -219,5 +205,4 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
             }
         }
     }
-
 }

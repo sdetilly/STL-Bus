@@ -7,7 +7,6 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
-import com.google.android.gms.wearable.DataMap
 import com.tilly.steven.stlbusarrivals.VolleySingleton
 import com.tilly.steven.stlbusarrivals.XmlParser
 import java.util.*
@@ -33,16 +32,6 @@ class Details : Observable(), Observer {
     var stopId: String = ""
     var routeName: String = ""
     var stopName: String = ""
-
-    fun putData(): DataMap {
-        val map = DataMap()
-        map.putString("routeTag", tag)
-        map.putString("stopId", stopId)
-        map.putString("routeName", routeName)
-        map.putString("stopName", stopName)
-        map.putString("prediction", prediction)
-        return map
-    }
 
     fun getNetPrediction(ctx: Context) {
         xmlparser.addObserver(this)

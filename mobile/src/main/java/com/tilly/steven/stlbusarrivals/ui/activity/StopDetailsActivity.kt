@@ -1,24 +1,22 @@
 package com.tilly.steven.stlbusarrivals.ui.activity
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.app.AppCompatActivity
-import android.view.View
-
 import com.tilly.steven.stlbusarrivals.R
 import com.tilly.steven.stlbusarrivals.ui.fragments.DetailsFragment
 import com.tilly.steven.stlbusarrivals.ui.fragments.MapsFragment
 
 class StopDetailsActivity : AppCompatActivity() {
-    lateinit var adapterViewPager: androidx.fragment.app.FragmentPagerAdapter
+    lateinit var adapterViewPager: FragmentPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stop_details)
 
-        val vpPager = findViewById<View>(R.id.pager_details) as androidx.viewpager.widget.ViewPager
+        val vpPager = findViewById<View>(R.id.pager_details) as ViewPager
         adapterViewPager = MyPagerAdapter(supportFragmentManager)
         vpPager.adapter = adapterViewPager
 

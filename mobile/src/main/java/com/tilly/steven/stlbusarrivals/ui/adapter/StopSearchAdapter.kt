@@ -26,15 +26,14 @@ class StopSearchAdapter(ctx: Context, rowLayoutResourceId: Int, list: ArrayList<
         if (view != null) {
             holder = view.tag as ViewHolder
         } else {
-            view = inflater.inflate(R.layout.row_stop_search_list, parent, false)
+            view = inflater.inflate(R.layout.row_stop_search_list, parent, false)!!
             holder = ViewHolder()
-            holder.stopName = view!!.findViewById<View>(R.id.tv_row_stop_name) as TextView
+            holder.stopName = view.findViewById<View>(R.id.tv_row_stop_name) as TextView
             view.tag = holder
         }
 
         val item = getItem(position)
-        holder.stopName.text = item!!.title
-
+        holder.stopName.text = item?.title
         return view
     }
 

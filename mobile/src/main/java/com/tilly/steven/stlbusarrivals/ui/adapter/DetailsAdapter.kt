@@ -17,7 +17,6 @@ import java.util.*
 class DetailsAdapter(private val ctx: Context, rowLayoutResourceId: Int, list: List<Details>) : ArrayAdapter<Details>(ctx, rowLayoutResourceId, list) {
 
     private val inflater: LayoutInflater = LayoutInflater.from(ctx)
-    private var prediction: String? = null
 
     @SuppressLint("DefaultLocale")
     override fun getView(position: Int, view1: View?, parent: ViewGroup): View {
@@ -37,7 +36,7 @@ class DetailsAdapter(private val ctx: Context, rowLayoutResourceId: Int, list: L
         }
 
         val item = getItem(position)
-        prediction = item!!.prediction
+        val prediction = item?.prediction
 
         if (prediction != null) {
             val c = Calendar.getInstance()
@@ -58,8 +57,8 @@ class DetailsAdapter(private val ctx: Context, rowLayoutResourceId: Int, list: L
         } else {
             holder.arrivalTime.text = ctx.getString(R.string.no_bus)
         }
-        holder.routeName.text = item.routeName
-        holder.stop.text = item.stopName
+        holder.routeName.text = item?.routeName
+        holder.stop.text = item?.stopName
         return view
     }
 

@@ -2,11 +2,11 @@ package com.tilly.steven.stlbusarrivals.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
+import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.tilly.steven.stlbusarrivals.R
@@ -72,7 +72,7 @@ class StopSearchActivity : AppCompatActivity(), Observer {
         listView.adapter = stopSearchAdapter
         stopSearchAdapter.notifyDataSetChanged()
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val item = stopList[position]
             val stopId = item.id
             val stopName = item.title

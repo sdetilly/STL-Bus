@@ -47,7 +47,7 @@ class FavoritesFragment : androidx.fragment.app.Fragment(), Observer {
         listView = v.findViewById(R.id.list_favorite)
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val item = detailsList!![position]
+            val item = detailsList?.get(position) ?: return@OnItemClickListener
             val stopId = item.stopId
             val stopName = item.stopName
             val routeTag = item.tag

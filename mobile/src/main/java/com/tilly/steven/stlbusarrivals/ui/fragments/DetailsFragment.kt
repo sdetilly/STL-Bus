@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -21,7 +22,7 @@ import java.util.*
 /**
  * Created by Steven on 2016-01-28.
  */
-class DetailsFragment : androidx.fragment.app.Fragment(), Observer {
+class DetailsFragment : Fragment(), Observer {
 
     private val xmlparser = XmlParser()
     private var stopId: String = ""
@@ -145,52 +146,45 @@ class DetailsFragment : androidx.fragment.app.Fragment(), Observer {
             })
             queue.add(request)
         }
-
     }
 
     override fun update(observable: Observable, o: Any) {
         if (activity != null) {
             Log.d("detailsfrag update", "entered")
             if (o is TimeList) {
-                timeList = o
                 val c = Calendar.getInstance()
                 var currentHour = c.get(Calendar.HOUR_OF_DAY)
                 val currentMinutes = c.get(Calendar.MINUTE)
-                if (timeList!!.size != 0) {
-                    var predictedMinutes = currentMinutes + Integer.valueOf(timeList!![0].time)
+                if (o.size != 0) {
+                    var predictedMinutes = currentMinutes + Integer.valueOf(o[0].time)
                     while (predictedMinutes >= 60) {
                         currentHour++
                         predictedMinutes -= 60
                     }
                     if (predictedMinutes < 10) {
-                        firstPrediction.text = "$currentHour:0$predictedMinutes   ${getString(R.string.next_bus, timeList!![0].time)}"
+                        firstPrediction.text = "$currentHour:0$predictedMinutes   ${getString(R.string.next_bus, o[0].time)}"
                     } else {
-                        firstPrediction.text = "$currentHour:$predictedMinutes   ${getString(R.string.next_bus, timeList!![0].time)}"
+                        firstPrediction.text = "$currentHour:$predictedMinutes   ${getString(R.string.next_bus, o[0].time)}"
                     }
-                    if (timeList!!.size > 1) {
+                    if (o.size > 1) {
                         var nextHour = c.get(Calendar.HOUR_OF_DAY)
                         val nextMinutes = c.get(Calendar.MINUTE)
-                        var nextPredictedMinutes = nextMinutes + Integer.valueOf(timeList!![1].time)
+                        var nextPredictedMinutes = nextMinutes + Integer.valueOf(o[1].time)
                         while (nextPredictedMinutes >= 60) {
                             nextHour++
                             nextPredictedMinutes -= 60
                         }
                         if (nextPredictedMinutes < 10) {
-                            secondPrediction.text = "$nextHour:0$nextPredictedMinutes   ${getString(R.string.other_bus, timeList!![1].time)}"
+                            secondPrediction.text = "$nextHour:0$nextPredictedMinutes   ${getString(R.string.other_bus, o[1].time)}"
                         } else {
-                            secondPrediction.text = "$nextHour:$nextPredictedMinutes   ${getString(R.string.other_bus, timeList!![1].time)}"
+                            secondPrediction.text = "$nextHour:$nextPredictedMinutes   ${getString(R.string.other_bus, o[1].time)}"
                         }
                     } else
                         secondPrediction.visibility = View.GONE
                 }
             } else if (o is String) {
-                val text = o + ""
-                tvMessage.text = text
+                tvMessage.text = o
             }
         }
     }
-
-    companion object {
-        private var timeList: TimeList? = null
-    }
-}// Required empty public constructor
+}

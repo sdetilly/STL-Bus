@@ -2,7 +2,6 @@ package com.tilly.steven.stlbusarrivals.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +22,6 @@ import java.util.*
 class RouteSearchFragment : androidx.fragment.app.Fragment(), Observer {
 
     private lateinit var listView: ListView
-    private lateinit var routeSearchAdapter: RouteSearchAdapter
     private val xmlparser = XmlParser()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +60,7 @@ class RouteSearchFragment : androidx.fragment.app.Fragment(), Observer {
 
     fun refreshList() {
         activity?.let {
-            routeSearchAdapter = RouteSearchAdapter(it, R.layout.row_route_search_list, routeList)
+            val routeSearchAdapter = RouteSearchAdapter(it, R.layout.row_route_search_list, routeList)
             listView.adapter = routeSearchAdapter
             routeSearchAdapter.notifyDataSetChanged()
 

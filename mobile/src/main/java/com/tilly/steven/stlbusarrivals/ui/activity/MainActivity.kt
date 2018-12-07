@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import androidx.fragment.app.FragmentManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
@@ -15,15 +16,13 @@ import com.tilly.steven.stlbusarrivals.ui.fragments.RouteSearchFragment
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var adapterViewPager: androidx.fragment.app.FragmentPagerAdapter
-    lateinit var vpPager: androidx.viewpager.widget.ViewPager
+    lateinit var adapterViewPager: FragmentPagerAdapter
+    lateinit var vpPager: ViewPager
     var vpagerItem: Int = 0
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.d("onCreate", "OK")
         MobileAds.initialize(applicationContext, getString(R.string.banner_ad_unit_id))
         val mAdView = findViewById<AdView>(R.id.adView)
         //val adRequest = AdRequest.Builder().build() //REAL ads
@@ -41,18 +40,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainAct loading...", "" + savedInstanceState.getInt("currentItem"))
         }
         vpPager.adapter = adapterViewPager
-        vpPager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
-
-            override fun onPageSelected(pos: Int) {
-                vpagerItem = pos
-            }
-
-            override fun onPageScrolled(arg0: Int, arg1: Float, arg2: Int) {}
-
-            override fun onPageScrollStateChanged(arg0: Int) {}
-        })
     }
-
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
@@ -60,8 +48,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainAct saving...", "" + vpagerItem)
     }
 
-
-    inner class MyPagerAdapter(fragmentManager: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fragmentManager) {
+    inner class MyPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
         private val NUM_ITEMS = 2
 
         private val tabTitles = arrayOf(getString(R.string.favorites), getString(R.string.search))
@@ -73,13 +60,13 @@ class MainActivity : AppCompatActivity() {
 
         // Returns the fragment to display for that page
 
-        override fun getItem(position: Int): androidx.fragment.app.Fragment? {
-            when (position) {
+        override fun getItem(position: Int): Fragment? {
+            return when (position) {
                 0 // Fragment # 0 - This will show FavoritesFragment
-                -> return FavoritesFragment()
+                -> FavoritesFragment()
                 1 // Fragment # 1 - This will show RouteSearchFragment
-                -> return RouteSearchFragment()
-                else -> return null
+                -> RouteSearchFragment()
+                else -> null
             }
         }
 

@@ -33,8 +33,7 @@ class RouteSearchAdapter(ctx: Context, rowLayoutResourceId: Int, list: ArrayList
         }
 
         val item = getItem(position)
-        holder.routeName.text = item!!.name
-
+        holder.routeName.text = item?.getName()
         return view
     }
 
