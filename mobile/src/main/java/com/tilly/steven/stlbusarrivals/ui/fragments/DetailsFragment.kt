@@ -8,14 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.tilly.steven.stlbusarrivals.DetailsDatabase
-import com.tilly.steven.stlbusarrivals.R
-import com.tilly.steven.stlbusarrivals.VolleySingleton
-import com.tilly.steven.stlbusarrivals.XmlParser
+import com.tilly.steven.stlbusarrivals.*
+import com.tilly.steven.stlbusarrivals.Utils.toast
 import com.tilly.steven.stlbusarrivals.model.Details
 import com.tilly.steven.stlbusarrivals.model.TimeList
 import java.util.*
@@ -78,9 +75,11 @@ class DetailsFragment : androidx.fragment.app.Fragment(), Observer {
             details.stopId = stopId
             details.routeName = routeName
             details.stopName = stopName
-            DetailsDatabase.getInstance().detailsDao().insertOrUpdate(details)
-            Toast.makeText(activity, getString(R.string.added_favorites), Toast.LENGTH_SHORT).show()
-            fab.visibility = View.GONE
+            launchUI {
+                asyncAwait { DetailsDatabase.getInstance().detailsDao().insertOrUpdate(details) }
+                toast(message = getString(R.string.added_favorites))
+                fab.visibility = View.GONE
+            }
         }
         DetailsDatabase.getInstance().detailsDao().loadDetails().observe(this, androidx.lifecycle.Observer {
             detailsList = it

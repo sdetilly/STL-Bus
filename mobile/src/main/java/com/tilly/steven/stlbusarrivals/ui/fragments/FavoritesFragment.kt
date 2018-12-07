@@ -11,9 +11,7 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.PopupMenu
 import com.android.volley.RequestQueue
-import com.tilly.steven.stlbusarrivals.DetailsDatabase
-import com.tilly.steven.stlbusarrivals.R
-import com.tilly.steven.stlbusarrivals.VolleySingleton
+import com.tilly.steven.stlbusarrivals.*
 import com.tilly.steven.stlbusarrivals.model.Details
 import com.tilly.steven.stlbusarrivals.ui.activity.StopDetailsActivity
 import com.tilly.steven.stlbusarrivals.ui.adapter.DetailsAdapter
@@ -89,7 +87,7 @@ class FavoritesFragment : androidx.fragment.app.Fragment(), Observer {
         super.onResume()
         DetailsDatabase.getInstance().detailsDao().loadDetails().observe(this, androidx.lifecycle.Observer {
             detailsList = it.toMutableList()
-            detailsAdapter = DetailsAdapter(activity!!, R.layout.row_favorites, detailsList!!)
+            detailsAdapter = DetailsAdapter(activity!!, R.layout.row_favorites, detailsList ?: emptyList())
 
         })
         startRepeatingTask()
@@ -105,11 +103,12 @@ class FavoritesFragment : androidx.fragment.app.Fragment(), Observer {
     }
 
     private fun getDetailPrediction() {
-        if (detailsList!!.size > 0 && detailsList != null) {
-            for (i in detailsList!!.indices) {
+        val list = detailsList
+        if (list?.isNotEmpty() == true) {
+            for (i in list.indices) {
                 Log.d("favoritefrag", "adding observers...")
-                detailsList!![i].addObserver(this)
-                detailsList!![i].getNetPrediction(activity!!)
+                list[i].addObserver(this)
+                list[i].getNetPrediction(activity!!)
             }
         } else {
             detailsList?.clear()
@@ -117,12 +116,14 @@ class FavoritesFragment : androidx.fragment.app.Fragment(), Observer {
     }
 
     private fun deleteDetails(details: Details) {
-        DetailsDatabase.getInstance().detailsDao().deleteDetail(details)
+        launchUI {
+            asyncAwait { DetailsDatabase.getInstance().detailsDao().deleteDetail(details) }
+        }
         getDetailPrediction()
     }
 
     override fun update(observable: Observable, o: Any) {
-        if (activity != null) {
+        activity?.let {
             Log.d("favoritesfrag update", "entered")
             detailsAdapter.notifyDataSetChanged()
             listView.adapter = detailsAdapter

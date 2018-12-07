@@ -40,7 +40,6 @@ configurations.all {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    wearApp project(':wear')
     //compile 'com.google.android.gms:play-services:8.4.0'
     //KOTLIN
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

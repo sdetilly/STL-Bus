@@ -7,7 +7,7 @@ import kotlinx.coroutines.*
 object Utils {
 
     @JvmStatic
-    fun toast(ctx: Context, message: String) {
+    fun toast(ctx: Context = MyApplication.context, message: String) {
         Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show()
     }
 }
