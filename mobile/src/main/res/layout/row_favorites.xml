@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:toolsl="http://schemas.android.com/tools"
-    xmlns:tools="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
-    <me.grantland.widget.AutofitTextView
+    <TextView
         android:id="@+id/tv_row_favorite_route"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:singleLine="true"
         android:textSize="16sp"
+        app:autoSizeTextType="uniform"
         android:layout_gravity="center_horizontal"
-        toolsl:text="hello"/>
+        tools:text="hello"/>
 
-    <me.grantland.widget.AutofitTextView
+    <TextView
         android:id="@+id/tv_row_favorite_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:singleLine="true"
         android:textSize="16sp"
+        app:autoSizeTextType="uniform"
         android:layout_gravity="center_horizontal"
-        toolsl:text="hello"/>
+        tools:text="hello"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -35,15 +36,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            toolsl:text="15h20"/>
+            tools:text="15h20"/>
 
         <TextView
             android:id="@+id/tv_row_favorite_prediction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
-            android:layout_marginLeft="16dp"
-            toolsl:text="in 20 minutes"/>
+            android:layout_marginStart="16dp"
+            tools:text="in 20 minutes"/>
 
     </LinearLayout>
 
