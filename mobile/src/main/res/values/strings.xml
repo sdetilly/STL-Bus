@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">STL Bus</string>
-    <string name="title_activity_maps">Map</string>
     <string name="banner_ad_unit_id" translatable="false">ca-app-pub-6262509699650850/3086460523</string>
     <string name="favorites">Favorites</string>
     <string name="search">Search</string>
