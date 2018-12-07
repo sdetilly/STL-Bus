@@ -3,6 +3,7 @@ package com.tilly.steven.stlbusarrivals
 import android.text.Html
 import android.util.Log
 import com.tilly.steven.stlbusarrivals.model.*
+import com.tilly.steven.stlbusarrivals.network.NetworkCallback
 import kotlinx.coroutines.async
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
@@ -17,10 +18,10 @@ import java.util.*
 class XmlParser : Observable() {
 
     @Throws(XmlPullParserException::class, IOException::class)
-    fun readRouteXml(xml: String) {
+    fun readRouteXml(xml: String, callback: NetworkCallback){
         launchUI {
-            val routeList = RouteList()
-            async {
+            val list = async {
+                val routeList = RouteList()
                 val factory = XmlPullParserFactory.newInstance()
                 factory.isNamespaceAware = true
                 val xpp = factory.newPullParser()
@@ -39,8 +40,9 @@ class XmlParser : Observable() {
                     }
                     eventType = xpp.next()
                 }
+                routeList
             }.await()
-            notifyObs(routeList)
+            callback.onRouteListLoaded(list)
         }
     }
 

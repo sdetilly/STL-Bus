@@ -147,7 +147,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
                 val pathBounds = o
                 val bounds = LatLngBounds(
                         pathBounds.getMinBounds(), pathBounds.getMaxBounds())
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15))
+                mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15))
             }
         }
     }
@@ -176,7 +176,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(activity!!,
                                 Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    Utils.toast(context!!, "Permission Needed")
+                    Utils.toast( "Permission Needed")
                 } else {
                     requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100)
                 }
@@ -185,7 +185,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
             }
             return
         }
-        mMap.isMyLocationEnabled = true
+        mMap?.isMyLocationEnabled = true
         sendPathRequest()
 
     }
