@@ -2,30 +2,25 @@ package com.tilly.steven.stlbusarrivals.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
 import com.tilly.steven.stlbusarrivals.R
-import com.tilly.steven.stlbusarrivals.VolleySingleton
-import com.tilly.steven.stlbusarrivals.XmlParser
+import com.tilly.steven.stlbusarrivals.Utils.toast
 import com.tilly.steven.stlbusarrivals.model.StopList
+import com.tilly.steven.stlbusarrivals.network.NetworkCallback
+import com.tilly.steven.stlbusarrivals.network.StopRepo
 import com.tilly.steven.stlbusarrivals.ui.adapter.StopSearchAdapter
-import java.util.*
 
 /**
  * Created by Steven on 2016-01-28.
  */
-class StopSearchActivity : AppCompatActivity(), Observer {
+class StopSearchActivity : AppCompatActivity(), NetworkCallback {
 
     private lateinit var listView: ListView
-    private val xmlparser = XmlParser()
     private lateinit var routeTag: String
     private lateinit var routeName: String
-    private lateinit var stopList: StopList
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,26 +35,7 @@ class StopSearchActivity : AppCompatActivity(), Observer {
             routeName = savedInstanceState.getString("routeName", "")
         }
         title = routeName
-        sendRequest()
-    }
-
-    private fun sendRequest() {
-        val queue = VolleySingleton.getInstance(this).requestQueue
-        xmlparser.addObserver(this)
-        val url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r=$routeTag&terse"
-        val request = StringRequest(url, Response.Listener { response ->
-            // we got the response, now our job is to handle it
-            //parseXmlResponse(response);
-            try {
-                xmlparser.readStopXml(response)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }, Response.ErrorListener { error ->
-            error.printStackTrace()
-            sendRequest()
-        })
-        queue.add(request)
+        StopRepo.getInstance().getStopList(routeTag, this)
     }
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle) {
@@ -67,7 +43,7 @@ class StopSearchActivity : AppCompatActivity(), Observer {
         savedInstanceState.putString("routeTag", routeTag)
     }
 
-    fun refreshList() {
+    fun refreshList(stopList: StopList) {
         val stopSearchAdapter = StopSearchAdapter(this, R.layout.row_stop_search_list, stopList)
         listView.adapter = stopSearchAdapter
         stopSearchAdapter.notifyDataSetChanged()
@@ -86,11 +62,11 @@ class StopSearchActivity : AppCompatActivity(), Observer {
         }
     }
 
-    override fun update(observable: Observable, o: Any) {
-        Log.d("stopfrag update", "entered")
-        if (o is StopList) {
-            stopList = o
-        }
-        refreshList()
+    override fun onApiError(error: String) {
+        toast(error)
+    }
+
+    override fun onStopListLoaded(stopList: StopList) {
+        refreshList(stopList)
     }
 }

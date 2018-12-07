@@ -88,6 +88,8 @@ class FavoritesFragment : androidx.fragment.app.Fragment(), Observer {
         DetailsDatabase.getInstance().detailsDao().loadDetails().observe(this, androidx.lifecycle.Observer {
             detailsList = it.toMutableList()
             detailsAdapter = DetailsAdapter(activity!!, R.layout.row_favorites, detailsList ?: emptyList())
+            listView.adapter = detailsAdapter
+            getDetailPrediction()
 
         })
         startRepeatingTask()
@@ -110,8 +112,6 @@ class FavoritesFragment : androidx.fragment.app.Fragment(), Observer {
                 list[i].addObserver(this)
                 list[i].getNetPrediction(activity!!)
             }
-        } else {
-            detailsList?.clear()
         }
     }
 

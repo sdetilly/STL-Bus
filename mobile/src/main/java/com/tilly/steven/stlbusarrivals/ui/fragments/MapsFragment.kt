@@ -7,14 +7,13 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -22,27 +21,26 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.tilly.steven.stlbusarrivals.R
 import com.tilly.steven.stlbusarrivals.Utils
-import com.tilly.steven.stlbusarrivals.VolleySingleton
-import com.tilly.steven.stlbusarrivals.XmlParser
+import com.tilly.steven.stlbusarrivals.Utils.toast
 import com.tilly.steven.stlbusarrivals.model.PathBounds
 import com.tilly.steven.stlbusarrivals.model.PathList
 import com.tilly.steven.stlbusarrivals.model.VehiculeList
-import java.util.*
+import com.tilly.steven.stlbusarrivals.network.DetailsRepo
+import com.tilly.steven.stlbusarrivals.network.NetworkCallback
 
 /**
  * Created by Steven on 2016-01-28.
  */
-class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Observer {
+class MapsFragment : Fragment(), OnMapReadyCallback, NetworkCallback {
 
     private var mMap: GoogleMap? = null
     private var pathList: PathList = PathList()
-    private val xmlparser = XmlParser()
-    private var routeTag: String? = null
+    private var routeTag: String = ""
     private lateinit var mHandler: Handler
 
     private var mStatusChecker: Runnable = object : Runnable {
         override fun run() {
-            sendDetailRequest()
+            DetailsRepo.getInstance().getLocation(routeTag, this@MapsFragment)
             val mInterval = 10000
             mHandler.postDelayed(this, mInterval.toLong())
         }
@@ -50,8 +48,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        xmlparser.addObserver(this)
-        routeTag = arguments?.getString("routeTag")
+        routeTag = arguments?.getString("routeTag") ?: ""
         mHandler = Handler()
     }
 
@@ -60,7 +57,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
         val v = inflater.inflate(R.layout.fragment_map, container, false) as ViewGroup
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment!!.getMapAsync(this)
+        mapFragment?.getMapAsync(this)
         return v
     }
 
@@ -73,83 +70,47 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
         mHandler.removeCallbacks(mStatusChecker)
     }
 
-    private fun sendPathRequest() {
-        val queue = VolleySingleton.getInstance(activity!!).requestQueue
-        xmlparser.addObserver(this)
-        val url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=stl&r=" + routeTag!!
-        val request = StringRequest(url, Response.Listener { response ->
-            // we got the response, now our job is to handle it
-            //parseXmlResponse(response);
-            try {
-                xmlparser.readStopXml(response)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }, Response.ErrorListener { error ->
-            error.printStackTrace()
-            sendPathRequest()
-        })
-        queue.add(request)
+    override fun onApiError(error: String) {
+        toast(error)
     }
 
-    private fun sendDetailRequest() {
-        val queue = VolleySingleton.getInstance(activity!!).requestQueue
-        val url = "http://webservices.nextbus.com/service/publicXMLFeed?command=vehicleLocations&a=stl&r=$routeTag&t=0"
-        val request = StringRequest(url, Response.Listener { response ->
-            // we got the response, now our job is to handle it
-            //parseXmlResponse(response);
-            try {
-                xmlparser.readLocation(response)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }, Response.ErrorListener { error ->
-            error.printStackTrace()
-            sendDetailRequest()
-        })
-        queue.add(request)
+    override fun onPathListLoaded(pathList: PathList) {
+        this.pathList = pathList
+        startRepeatingTask()
     }
 
-    override fun update(observable: Observable, o: Any) {
-        if (activity != null) {
-            if (o is VehiculeList) {
-                if (o.size != 0) {
-                    mMap!!.clear()
-                    for (i in o.indices) {
-                        val longitude = o[i].longitude
-                        val latitude = o[i].latitude
-                        if (longitude != "false") {
-                            val bus = LatLng(java.lang.Double.valueOf(latitude), java.lang.Double.valueOf(longitude))
-                            mMap!!.addMarker(MarkerOptions().position(bus).title(getString(R.string.bus_location))
-                                    .icon(BitmapDescriptorFactory.fromBitmap(mapIcon()))
-                                    .anchor(0.5f, 0.5f))
-                        }
-                    }
-                } else {
-                    mMap!!.clear()
-                    Toast.makeText(activity, getString(R.string.server_no_bus), Toast.LENGTH_SHORT).show()
+    override fun onVehicleListLoaded(vehiculeList: VehiculeList) {
+        if (vehiculeList.size != 0) {
+            mMap!!.clear()
+            for (i in vehiculeList.indices) {
+                val longitude = vehiculeList[i].longitude
+                val latitude = vehiculeList[i].latitude
+                if (longitude != "false") {
+                    val bus = LatLng(java.lang.Double.valueOf(latitude), java.lang.Double.valueOf(longitude))
+                    mMap!!.addMarker(MarkerOptions().position(bus).title(getString(R.string.bus_location))
+                            .icon(BitmapDescriptorFactory.fromBitmap(mapIcon()))
+                            .anchor(0.5f, 0.5f))
                 }
-                for (j in pathList.indices.reversed()) {
-                    for (i in pathList[j].size - 1 downTo 1) {
+            }
+        } else {
+            mMap!!.clear()
+            Toast.makeText(activity, getString(R.string.server_no_bus), Toast.LENGTH_SHORT).show()
+        }
+        for (j in pathList.indices.reversed()) {
+            for (i in pathList[j].size - 1 downTo 1) {
 
-                        mMap!!.addPolyline(PolylineOptions()
-                                .add(pathList[j][i].getLatLng(), pathList[j][i - 1].getLatLng())
-                                .width(5f)
-                                .color(Color.BLUE))
-                    }
-                }
-            }
-            if (o is PathList) {
-                pathList = o
-                startRepeatingTask()
-            }
-            if (o is PathBounds) {
-                val pathBounds = o
-                val bounds = LatLngBounds(
-                        pathBounds.getMinBounds(), pathBounds.getMaxBounds())
-                mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15))
+                mMap!!.addPolyline(PolylineOptions()
+                        .add(pathList[j][i].getLatLng(), pathList[j][i - 1].getLatLng())
+                        .width(5f)
+                        .color(Color.BLUE))
             }
         }
+    }
+
+    override fun onPathBoundsLoaded(pathBounds: PathBounds) {
+        val bounds = LatLngBounds(
+                pathBounds.getMinBounds(), pathBounds.getMaxBounds())
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15))
     }
 
     private fun mapIcon(): Bitmap {
@@ -186,7 +147,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
             return
         }
         mMap?.isMyLocationEnabled = true
-        sendPathRequest()
+        DetailsRepo.getInstance().getPath(routeTag, this)
 
     }
 
@@ -198,7 +159,7 @@ class MapsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback, Obser
                     return
                 }
                 mMap!!.isMyLocationEnabled = true
-                sendPathRequest()
+                DetailsRepo.getInstance().getPath(routeTag, this)
                 Toast.makeText(context, "Permission Granted!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, "Permission Denied!", Toast.LENGTH_SHORT).show()

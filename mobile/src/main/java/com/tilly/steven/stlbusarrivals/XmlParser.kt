@@ -47,13 +47,13 @@ class XmlParser : Observable() {
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    fun readStopXml(xml: String) {
+    fun readStopXml(xml: String, callback: NetworkCallback) {
         launchUI {
             val stopList = StopList()
             val pathList = PathList()
             val pathBounds = PathBounds()
 
-            async {
+            val triple = async {
                 val factory = XmlPullParserFactory.newInstance()
                 factory.isNamespaceAware = true
                 val xpp = factory.newPullParser()
@@ -93,11 +93,11 @@ class XmlParser : Observable() {
                     eventType = xpp.next()
                 }
                 Log.d("doInBackground", "finished")
+                Triple(stopList, pathList, pathBounds)
             }.await()
-            Log.d("onPostExecute", "notifying observers")
-            notifyObs(stopList)
-            notifyObs(pathList)
-            notifyObs(pathBounds)
+            callback.onStopListLoaded(triple.first)
+            callback.onPathListLoaded(triple.second)
+            callback.onPathBoundsLoaded(triple.third)
         }
     }
 
@@ -130,30 +130,31 @@ class XmlParser : Observable() {
     }
 
     @Throws(XmlPullParserException::class, IOException::class)
-    fun readLocation(xml: String) {
+    fun readLocation(xml: String, callback: NetworkCallback) {
         launchUI {
             val vehiculeList = VehiculeList()
+            val list = async {
+                val factory = XmlPullParserFactory.newInstance()
+                factory.isNamespaceAware = true
+                val xpp = factory.newPullParser()
 
-            val factory = XmlPullParserFactory.newInstance()
-            factory.isNamespaceAware = true
-            val xpp = factory.newPullParser()
-
-            xpp.setInput(StringReader(xml))
-            var eventType = xpp.eventType
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                if (eventType == XmlPullParser.START_DOCUMENT) {
-                } else if (eventType == XmlPullParser.START_TAG) {
-                    if (xpp.name == "vehicle") {
-                        val vehicule = Vehicule()
-                        vehicule.longitude = xpp.getAttributeValue(4)
-                        vehicule.latitude = xpp.getAttributeValue(3)
-                        vehiculeList.add(vehicule)
+                xpp.setInput(StringReader(xml))
+                var eventType = xpp.eventType
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    if (eventType == XmlPullParser.START_DOCUMENT) {
+                    } else if (eventType == XmlPullParser.START_TAG) {
+                        if (xpp.name == "vehicle") {
+                            val vehicule = Vehicule()
+                            vehicule.longitude = xpp.getAttributeValue(4)
+                            vehicule.latitude = xpp.getAttributeValue(3)
+                            vehiculeList.add(vehicule)
+                        }
                     }
+                    eventType = xpp.next()
                 }
-                eventType = xpp.next()
-            }
-            notifyObs(vehiculeList)
-
+                vehiculeList
+            }.await()
+            callback.onVehicleListLoaded(list)
         }
     }
 
